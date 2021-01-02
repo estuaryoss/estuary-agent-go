@@ -8,21 +8,21 @@ import (
 	"time"
 )
 
-type CommandInMemory struct {
+type CommandInParallel struct {
 	commandDescription models.CommandDescription
 	commandsMap        map[string]*models.CommandStatus
 }
 
-func NewCommandInMemory() *CommandInMemory {
-	commandInMemory := &CommandInMemory{
+func NewCommandInParallel() *CommandInParallel {
+	commandInParallel := &CommandInParallel{
 		commandDescription: models.CommandDescription{false, false, "", "", 0.1,
 			10, "none", map[string]*models.CommandStatus{}},
 		commandsMap: map[string]*models.CommandStatus{},
 	}
-	return commandInMemory
+	return commandInParallel
 }
 
-func (cim *CommandInMemory) RunCommands(commands []string) models.CommandDescription {
+func (cim *CommandInParallel) RunCommands(commands []string) models.CommandDescription {
 	startedAt := time.Now()
 	cim.commandDescription.SetPid(os.Getpid())
 	cim.commandDescription.SetId("none")
@@ -45,15 +45,22 @@ func (cim *CommandInMemory) RunCommands(commands []string) models.CommandDescrip
 	return cim.commandDescription
 }
 
-func (cim *CommandInMemory) runCommands(commands []string) {
+func (cim *CommandInParallel) runCommands(commands []string) {
+	var commandChans []chan *models.CommandStatus
 	for _, command := range commands {
-		cim.runCommand(command)
+		ch := make(chan *models.CommandStatus)
+		commandChans = append(commandChans, ch)
+		go cim.runCommand(command, ch)
+	}
+
+	for _, ch := range commandChans {
+		<-ch
 	}
 
 	cim.commandDescription.SetCommands(cim.commandsMap)
 }
 
-func (cim *CommandInMemory) runCommand(command string) {
+func (cim *CommandInParallel) runCommand(command string, ch chan *models.CommandStatus) {
 	commandStatus := models.NewCommandStatus()
 
 	startedAt := time.Now()
@@ -63,7 +70,6 @@ func (cim *CommandInMemory) runCommand(command string) {
 	commandStatus.SetStartedAt(startedAtString)
 
 	commandDetails := utils.RunCommand(command)
-
 	finishedAt := time.Now()
 	finishedAtString := fmt.Sprintf("%d-%02d-%02d %02d:%02d:%02d.%02d",
 		finishedAt.Year(), finishedAt.Month(), finishedAt.Day(),
@@ -74,4 +80,6 @@ func (cim *CommandInMemory) runCommand(command string) {
 	commandStatus.SetStatus("finished")
 	commandStatus.SetCommandDetails(commandDetails)
 	cim.commandsMap[command] = commandStatus
+
+	ch <- commandStatus
 }

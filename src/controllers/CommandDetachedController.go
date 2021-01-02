@@ -10,10 +10,9 @@ import (
 	"strings"
 )
 
-var CommandPost = func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+var CommandDetachedPost = func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	body, _ := ioutil.ReadAll(r.Body)
 	commands := u.TrimSpacesAndLineEndings(strings.Split(string(body), "\n"))
-
 	if len(commands) == 0 {
 		u.ApiResponse(w, u.ApiMessage(uint32(constants.EMPTY_REQUEST_BODY_PROVIDED),
 			u.GetMessage()[uint32(constants.EMPTY_REQUEST_BODY_PROVIDED)],
@@ -21,7 +20,7 @@ var CommandPost = func(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 			r.URL.Path))
 		return
 	}
-	cim := command.NewCommandInMemory()
+	cim := command.NewCommandDetached()
 	commandDescription := cim.RunCommands(commands)
 	resp := u.ApiMessage(uint32(constants.SUCCESS),
 		u.GetMessage()[uint32(constants.SUCCESS)],

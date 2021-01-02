@@ -1,8 +1,8 @@
 package constants
 
 import (
-	"estuary-agent-go/src/io"
 	"fmt"
+	"github.com/dinuta/estuary-agent-go/src/io"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"

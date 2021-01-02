@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"estuary-agent-go/src/constants"
-	u "estuary-agent-go/src/utils"
+	"github.com/dinuta/estuary-agent-go/src/constants"
+	u "github.com/dinuta/estuary-agent-go/src/utils"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )

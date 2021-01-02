@@ -2,10 +2,10 @@ package routes
 
 import (
 	"encoding/json"
-	"estuary-agent-go/src/constants"
-	"estuary-agent-go/src/controllers"
-	u "estuary-agent-go/src/utils"
 	"fmt"
+	"github.com/dinuta/estuary-agent-go/src/constants"
+	"github.com/dinuta/estuary-agent-go/src/controllers"
+	u "github.com/dinuta/estuary-agent-go/src/utils"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"os"
@@ -22,6 +22,8 @@ var SetupServer = func(appPort string) {
 	router.PUT("/file", TokenAuthentication(controllers.PutFile))
 	router.GET("/folder", TokenAuthentication(controllers.GetFolder))
 	router.POST("/command", TokenAuthentication(controllers.CommandPost))
+	router.POST("/commandparallel", TokenAuthentication(controllers.CommandParallelPost))
+	router.POST("/commanddetached", TokenAuthentication(controllers.CommandDetachedPost))
 
 	err := http.ListenAndServe(":"+appPort, router)
 	if err != nil {

@@ -2,8 +2,8 @@ package utils
 
 import (
 	"encoding/json"
-	"estuary-agent-go/src/constants"
 	"fmt"
+	"github.com/dinuta/estuary-agent-go/src/constants"
 	"io"
 	"net/http"
 	"time"

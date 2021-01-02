@@ -7,7 +7,9 @@ func TrimSpacesAndLineEndings(data []string) []string {
 	for _, elem := range data {
 		trimElem := strings.TrimSuffix(elem, "\r")
 		trimElem = strings.TrimSpace(trimElem)
-		compiledData = append(compiledData, trimElem)
+		if trimElem != "" {
+			compiledData = append(compiledData, trimElem)
+		}
 	}
 
 	return compiledData

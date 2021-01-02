@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"archive/zip"
-	"estuary-agent-go/src/constants"
-	u "estuary-agent-go/src/utils"
 	"fmt"
+	"github.com/dinuta/estuary-agent-go/src/constants"
+	u "github.com/dinuta/estuary-agent-go/src/utils"
 	"github.com/julienschmidt/httprouter"
 	"io"
 	"io/ioutil"

@@ -1,6 +1,6 @@
-module estuary-agent-go
+module github.com/dinuta/estuary-agent-go
 
-go 1.12
+go 1.14
 
 require (
 	github.com/denisenkom/go-mssqldb v0.9.0 // indirect

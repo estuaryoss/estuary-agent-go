@@ -1,11 +1,11 @@
 package models
 
 type CommandDetails struct {
-	Out  string `json:"out"`
-	Err  string `json:"err"`
-	Pid  int    `json:"pid"`
-	Code int    `json:"code"`
-	Args string `json:"args"`
+	Out  string   `json:"out"`
+	Err  string   `json:"err"`
+	Pid  int      `json:"pid"`
+	Code int      `json:"code"`
+	Args []string `json:"args"`
 }
 
 func NewCommandDetails() *CommandDetails {
@@ -45,10 +45,10 @@ func (cd *CommandDetails) SetCode(code int) {
 	cd.Code = code
 }
 
-func (cd *CommandDetails) GetArgs() string {
+func (cd *CommandDetails) GetArgs() []string {
 	return cd.Args
 }
 
-func (cd *CommandDetails) SetArgs(args string) {
+func (cd *CommandDetails) SetArgs(args []string) {
 	cd.Args = args
 }

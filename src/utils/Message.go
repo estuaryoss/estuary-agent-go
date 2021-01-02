@@ -1,6 +1,6 @@
 package utils
 
-import "estuary-agent-go/src/constants"
+import "github.com/dinuta/estuary-agent-go/src/constants"
 
 func GetMessage() map[uint32]string {
 	return map[uint32]string{

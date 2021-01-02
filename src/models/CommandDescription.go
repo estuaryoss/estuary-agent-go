@@ -1,14 +1,14 @@
 package models
 
 type CommandDescription struct {
-	Finished   bool                     `json:"finished"`
-	Started    bool                     `json:"started"`
-	Startedat  string                   `json:"startedat"`
-	Finishedat string                   `json:"finishedat"`
-	Duration   float64                  `json:"duration"`
-	Pid        int                      `json:"pid"`
-	Id         string                   `json:"id"`
-	Commands   map[string]CommandStatus `json:"commands"`
+	Finished   bool                      `json:"finished"`
+	Started    bool                      `json:"started"`
+	Startedat  string                    `json:"startedat"`
+	Finishedat string                    `json:"finishedat"`
+	Duration   float64                   `json:"duration"`
+	Pid        int                       `json:"pid"`
+	Id         string                    `json:"id"`
+	Commands   map[string]*CommandStatus `json:"commands"`
 }
 
 func NewCommandDescription() *CommandDescription {
@@ -72,10 +72,10 @@ func (cd *CommandDescription) SetId(id string) {
 	cd.Id = id
 }
 
-func (cd *CommandDescription) GetCommands() map[string]CommandStatus {
+func (cd *CommandDescription) GetCommands() map[string]*CommandStatus {
 	return cd.Commands
 }
 
-func (cd *CommandDescription) SetCommands(commands map[string]CommandStatus) {
+func (cd *CommandDescription) SetCommands(commands map[string]*CommandStatus) {
 	cd.Commands = commands
 }
