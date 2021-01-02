@@ -23,7 +23,7 @@ var SetupServer = func(appPort string) {
 	router.GET("/folder", TokenAuthentication(controllers.GetFolder))
 	router.POST("/command", TokenAuthentication(controllers.CommandPost))
 	router.POST("/commandparallel", TokenAuthentication(controllers.CommandParallelPost))
-	router.POST("/commanddetached", TokenAuthentication(controllers.CommandDetachedPost))
+	router.POST("/commanddetached/:cid", TokenAuthentication(controllers.CommandDetachedPost))
 
 	err := http.ListenAndServe(":"+appPort, router)
 	if err != nil {

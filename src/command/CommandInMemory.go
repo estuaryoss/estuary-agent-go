@@ -9,20 +9,24 @@ import (
 )
 
 type CommandInMemory struct {
-	commandDescription models.CommandDescription
+	commandDescription *models.CommandDescription
 	commandsMap        map[string]*models.CommandStatus
 }
 
 func NewCommandInMemory() *CommandInMemory {
+	initAt := time.Now()
+	initAtString := fmt.Sprintf("%d-%02d-%02d %02d:%02d:%02d.%02d",
+		initAt.Year(), initAt.Month(), initAt.Day(),
+		initAt.Hour(), initAt.Minute(), initAt.Second(), initAt.Nanosecond()/1000)
 	commandInMemory := &CommandInMemory{
-		commandDescription: models.CommandDescription{false, false, "", "", 0.1,
-			10, "none", map[string]*models.CommandStatus{}},
+		commandDescription: &models.CommandDescription{false, false, initAtString,
+			initAtString, 0, 0, "none", map[string]*models.CommandStatus{}},
 		commandsMap: map[string]*models.CommandStatus{},
 	}
 	return commandInMemory
 }
 
-func (cim *CommandInMemory) RunCommands(commands []string) models.CommandDescription {
+func (cim *CommandInMemory) RunCommands(commands []string) *models.CommandDescription {
 	startedAt := time.Now()
 	cim.commandDescription.SetPid(os.Getpid())
 	cim.commandDescription.SetId("none")

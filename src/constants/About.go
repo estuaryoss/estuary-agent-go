@@ -2,7 +2,6 @@ package constants
 
 import (
 	"fmt"
-	"github.com/dinuta/estuary-agent-go/src/io"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/host"
 	"github.com/shirou/gopsutil/v3/mem"
@@ -11,8 +10,8 @@ import (
 )
 
 const (
-	Name    = "estuary-agent"
-	Version = "4.1.0"
+	NAME    = "estuary-agent"
+	VERSION = "4.1.0"
 )
 
 func About() map[string]interface{} {
@@ -27,7 +26,7 @@ func About() map[string]interface{} {
 		"version":      ver,
 		"architecture": runtime.GOARCH,
 		"machine":      "NA",
-		"layer":        getLayer(),
+		"layer":        "getLayer()",
 		"hostname":     hostname,
 		"cpu":          cpuInfo[0].ModelName,
 		"ram":          fmt.Sprint(virtualMemory.Total/(1024*1024*1024), " GB"),
@@ -36,9 +35,11 @@ func About() map[string]interface{} {
 }
 
 func getLayer() string {
-	layer := "Machine"
-	if io.DoesFileExists("/.dockerenv") {
+	var layer string
+	if _, err := os.Stat("/.dockerenv"); err == nil {
 		layer = "Docker"
+	} else {
+		layer = "Machine"
 	}
 	return layer
 }

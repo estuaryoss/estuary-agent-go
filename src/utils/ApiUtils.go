@@ -19,8 +19,8 @@ func ApiMessage(code uint32, message string, description interface{}, path strin
 		"code":        code,
 		"message":     message,
 		"description": description,
-		"name":        constants.Name,
-		"version":     constants.Version,
+		"name":        constants.NAME,
+		"version":     constants.VERSION,
 		"timestamp":   timestamp,
 		"path":        path,
 	}

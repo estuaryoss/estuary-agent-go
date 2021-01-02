@@ -30,7 +30,7 @@ func RunCommand(command string) *models.CommandDetails {
 	cd.SetPid(cmd.ProcessState.Pid())
 	cd.SetArgs(cmd.Args)
 
-	log.Printf("Executed command %s, with process id %d\n", command, cmd.ProcessState.Pid())
+	log.Printf("Executed command \"%s\", with process id %d\n", command, cmd.ProcessState.Pid())
 	return cd
 }
 
