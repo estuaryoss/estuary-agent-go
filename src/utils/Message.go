@@ -7,7 +7,7 @@ func GetMessage() map[uint32]string {
 		uint32(constants.SUCCESS):                        "Success",
 		uint32(constants.JINJA2_RENDER_FAILURE):          "Jinja2 render failed",
 		uint32(constants.GET_FILE_FAILURE):               "Getting file %s from the estuary agent service failed",
-		uint32(constants.COMMAND_DETACHED_START_FAILURE): "Starting test id %s failed",
+		uint32(constants.COMMAND_DETACHED_START_FAILURE): "Starting command in background with id %s failed",
 		uint32(constants.TEST_STOP_FAILURE):              "Stopping running test %s failed",
 		uint32(constants.GET_FILE_FAILURE_IS_DIR):        "Getting %s from %s failed. It is a directory, not a file.",
 		uint32(constants.GET_ENV_VAR_FAILURE):            "Getting env var %s failed.",

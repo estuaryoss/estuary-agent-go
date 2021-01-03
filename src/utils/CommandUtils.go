@@ -21,10 +21,10 @@ func RunCommand(command string) *models.CommandDetails {
 	cmd.Stderr = &stdErr
 
 	err := cmd.Run()
-	cd.SetErr(fmt.Sprint(cmd.Stderr))
 	if err != nil {
-		cd.SetErr(err.Error())
+		log.Println(err.Error())
 	}
+	cd.SetErr(fmt.Sprint(cmd.Stderr))
 	cd.SetOut(fmt.Sprint(cmd.Stdout))
 	cd.SetCode(cmd.ProcessState.ExitCode())
 	cd.SetPid(cmd.ProcessState.Pid())
@@ -45,6 +45,15 @@ func StartCommand(command string) *exec.Cmd {
 	cmd.Start()
 
 	return cmd
+}
+
+func StartCommandAndGetError(command []string) error {
+	cmdName := command[0]
+	cmdArgs := command[1:]
+	cmd := exec.Command(cmdName, cmdArgs...)
+	cmd.Env = environment.GetInstance().GetEnvAndVirtualEnvArray()
+
+	return cmd.Start()
 }
 
 /**
@@ -76,7 +85,7 @@ func getOsCommand(command string) *exec.Cmd {
 	cmd := exec.Command("", args...)
 	if runtime.GOOS == "windows" {
 		args = []string{"/c", command}
-		cmd = exec.Command("cmd.exe", args...)
+		cmd = exec.Command("cmd", args...)
 	} else {
 		args = []string{"-c", command}
 		cmd = exec.Command("sh", args...)

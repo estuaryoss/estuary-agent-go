@@ -114,9 +114,16 @@ var setItemInMap = func(data []string, getKeyVal func(item string) (key, val str
 }
 
 func mergeMaps(first map[string]string, second map[string]string) map[string]string {
-	for k, v := range second {
-		first[k] = v
+	mergedMap := make(map[string]string)
+	for k, v := range first {
+		if k != "" {
+			mergedMap[k] = v
+		}
 	}
-
-	return first
+	for k, v := range second {
+		if k != "" {
+			mergedMap[k] = v
+		}
+	}
+	return mergedMap
 }
