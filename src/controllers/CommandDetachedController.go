@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/dinuta/estuary-agent-go/src/constants"
-	u "github.com/dinuta/estuary-agent-go/src/utils"
+	"github.com/estuaryoss/estuary-agent-go/src/constants"
+	u "github.com/estuaryoss/estuary-agent-go/src/utils"
 	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
 	"log"

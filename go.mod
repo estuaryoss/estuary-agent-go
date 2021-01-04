@@ -1,4 +1,4 @@
-module github.com/dinuta/estuary-agent-go
+module github.com/estuaryoss/estuary-agent-go
 
 go 1.13
 

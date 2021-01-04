@@ -2,8 +2,8 @@ package command
 
 import (
 	"fmt"
-	"github.com/dinuta/estuary-agent-go/src/models"
-	"github.com/dinuta/estuary-agent-go/src/utils"
+	"github.com/estuaryoss/estuary-agent-go/src/models"
+	"github.com/estuaryoss/estuary-agent-go/src/utils"
 	"os"
 	"time"
 )

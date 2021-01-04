@@ -3,7 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dinuta/estuary-agent-go/src/constants"
+	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"io"
 	"net/http"
 	"time"

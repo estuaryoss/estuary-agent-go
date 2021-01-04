@@ -1,7 +1,7 @@
 package command
 
 import (
-	"github.com/dinuta/estuary-agent-go/src/models"
+	"github.com/estuaryoss/estuary-agent-go/src/models"
 )
 
 type CommandDetached struct {

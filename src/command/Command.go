@@ -2,8 +2,8 @@ package command
 
 import (
 	"fmt"
-	"github.com/dinuta/estuary-agent-go/src/models"
-	"github.com/dinuta/estuary-agent-go/src/utils"
+	"github.com/estuaryoss/estuary-agent-go/src/models"
+	"github.com/estuaryoss/estuary-agent-go/src/utils"
 	"os"
 	"time"
 )
@@ -11,11 +11,12 @@ import (
 type Command struct {
 	cmdId              string
 	outputJsonPath     string
+	enableStreams      bool
 	commandDescription *models.CommandDescription
 	commandsMap        map[string]*models.CommandStatus
 }
 
-func NewCommand(cmdId string, outputJsonPath string) *Command {
+func NewCommand(cmdId string, outputJsonPath string, enableStreams bool) *Command {
 	initAt := time.Now()
 	initAtString := fmt.Sprintf("%d-%02d-%02d %02d:%02d:%02d.%02d",
 		initAt.Year(), initAt.Month(), initAt.Day(),
@@ -24,6 +25,7 @@ func NewCommand(cmdId string, outputJsonPath string) *Command {
 	command := &Command{
 		cmdId:          cmdId,
 		outputJsonPath: outputJsonPath,
+		enableStreams:  enableStreams,
 		commandDescription: &models.CommandDescription{false, false, initAtString,
 			initAtString, 0, 0, "none", map[string]*models.CommandStatus{}},
 		commandsMap: map[string]*models.CommandStatus{},
@@ -76,8 +78,12 @@ func (com *Command) runCommand(command string) {
 	com.commandDescription.SetCommands(com.commandsMap)
 	utils.WriteFileJson(com.outputJsonPath, com.commandDescription)
 
-	commandDetails := utils.RunCommand(command)
-
+	var commandDetails *models.CommandDetails
+	if com.enableStreams == true {
+		commandDetails = utils.RunCommandToFile(command, com.cmdId)
+	} else {
+		commandDetails = utils.RunCommandNoFile(command, com.cmdId)
+	}
 	finishedAt := time.Now()
 	finishedAtString := fmt.Sprintf("%d-%02d-%02d %02d:%02d:%02d.%02d",
 		finishedAt.Year(), finishedAt.Month(), finishedAt.Day(),

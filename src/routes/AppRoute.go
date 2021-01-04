@@ -3,9 +3,9 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dinuta/estuary-agent-go/src/constants"
-	"github.com/dinuta/estuary-agent-go/src/controllers"
-	u "github.com/dinuta/estuary-agent-go/src/utils"
+	"github.com/estuaryoss/estuary-agent-go/src/constants"
+	"github.com/estuaryoss/estuary-agent-go/src/controllers"
+	u "github.com/estuaryoss/estuary-agent-go/src/utils"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"os"

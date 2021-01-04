@@ -77,3 +77,45 @@ func CreateDir(dirName string) {
 		panic(fmt.Sprintf("Failed creating dir: %s", dirName))
 	}
 }
+
+func RecreateFile(fileName string) {
+	DeleteFile(fileName)
+	CreateFileIfNotExist(fileName)
+}
+
+func DeleteFile(fileName string) {
+	if !DoesFileExists(fileName) {
+		return
+	}
+	err := os.Remove(fileName)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to delete file: %s", fileName))
+	}
+}
+
+func DeleteFiles(fileNames []string) {
+	for _, fileName := range fileNames {
+		err := os.Remove(fileName)
+		if err != nil {
+			panic(fmt.Sprintf("Failed to delete file: %s", fileName))
+		}
+	}
+}
+
+func RecreateFiles(fileNames []string) {
+	for _, fileName := range fileNames {
+		RecreateFile(fileName)
+	}
+}
+
+func OpenFile(fileName string) *os.File {
+	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	if err != nil {
+		panic(err.Error())
+	}
+	return file
+}
+
+func CloseFile(file *os.File) error {
+	return file.Close()
+}

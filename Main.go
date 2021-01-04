@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/dinuta/estuary-agent-go/src/routes"
+	"github.com/estuaryoss/estuary-agent-go/src/routes"
 	"log"
 	"os"
 )
