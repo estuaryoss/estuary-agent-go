@@ -44,6 +44,8 @@ func RunCommandToFile(command string, cmdId string) *models.CommandDetails {
 	RecreateFiles([]string{filePathStdOut, filePathStdErr})
 	fhStdOut := OpenFile(filePathStdOut)
 	fhStdErr := OpenFile(filePathStdErr)
+	defer fhStdErr.Close()
+	defer fhStdOut.Close()
 
 	cmd.Stdout = fhStdOut
 	cmd.Stderr = fhStdErr
@@ -52,8 +54,8 @@ func RunCommandToFile(command string, cmdId string) *models.CommandDetails {
 	if err != nil {
 		log.Println(err.Error())
 	}
-	cd.SetErr(fmt.Sprint(cmd.Stderr))
-	cd.SetOut(fmt.Sprint(cmd.Stdout))
+	cd.SetErr(string(ReadFile(filePathStdErr)))
+	cd.SetOut(string(ReadFile(filePathStdOut)))
 	cd.SetCode(cmd.ProcessState.ExitCode())
 	cd.SetPid(cmd.ProcessState.Pid())
 	cd.SetArgs(cmd.Args)
