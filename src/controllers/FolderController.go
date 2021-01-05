@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
-	"github.com/julienschmidt/httprouter"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -14,7 +13,7 @@ import (
 	"strings"
 )
 
-var GetFolder = func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+var GetFolder = func(w http.ResponseWriter, r *http.Request) {
 	folderName := r.Header.Get("Folder-Path")
 	if folderName == "" {
 		u.ApiResponse(w, u.ApiMessage(uint32(constants.HTTP_HEADER_NOT_PROVIDED),

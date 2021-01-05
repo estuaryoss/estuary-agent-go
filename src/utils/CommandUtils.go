@@ -39,8 +39,8 @@ func RunCommandToFile(command string, cmdId string) *models.CommandDetails {
 
 	cmd := getOsCommand(command)
 	cmd.Env = environment.GetInstance().GetEnvAndVirtualEnvArray()
-	filePathStdOut := getBase64HashForTheCommand(command, cmdId, ".out")
-	filePathStdErr := getBase64HashForTheCommand(command, cmdId, ".err")
+	filePathStdOut := GetBase64HashForTheCommand(command, cmdId, ".out")
+	filePathStdErr := GetBase64HashForTheCommand(command, cmdId, ".err")
 	RecreateFiles([]string{filePathStdOut, filePathStdErr})
 	fhStdOut := OpenFile(filePathStdOut)
 	fhStdErr := OpenFile(filePathStdErr)

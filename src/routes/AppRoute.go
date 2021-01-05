@@ -3,29 +3,36 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/estuaryoss/estuary-agent-go/src/controllers"
+	"github.com/gorilla/mux"
 	"net/http"
 	"os"
 
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
-	"github.com/estuaryoss/estuary-agent-go/src/controllers"
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
-	"github.com/julienschmidt/httprouter"
 )
 
 var SetupServer = func(appPort string) {
-	var router = httprouter.New()
-	router.GET("/ping", TokenAuthentication(controllers.Ping))
-	router.GET("/env", TokenAuthentication(controllers.GetEnvVars))
-	router.POST("/env", TokenAuthentication(controllers.SetEnvVars))
-	router.GET("/env/:name", TokenAuthentication(controllers.GetEnvVar))
-	router.GET("/about", TokenAuthentication(controllers.About))
-	router.GET("/file", TokenAuthentication(controllers.GetFile))
-	router.PUT("/file", TokenAuthentication(controllers.PutFile))
-	router.GET("/folder", TokenAuthentication(controllers.GetFolder))
-	router.POST("/command", TokenAuthentication(controllers.CommandPost))
-	router.POST("/commandparallel", TokenAuthentication(controllers.CommandParallelPost))
-	router.POST("/commanddetached/:cid", TokenAuthentication(controllers.CommandDetachedPost))
-	router.GET("/commanddetached/:cid", TokenAuthentication(controllers.CommandDetachedGetId))
+	var router = mux.NewRouter()
+
+	router.Use(TokenAuthentication)
+
+	router.HandleFunc("/ping", controllers.Ping).Methods("GET")
+	router.HandleFunc("/env", controllers.GetEnvVars).Methods("GET")
+	router.HandleFunc("/env", controllers.SetEnvVars).Methods("POST")
+	router.HandleFunc("/env/{name}", controllers.GetEnvVar).Methods("GET")
+	router.HandleFunc("/about", controllers.About).Methods("GET")
+	router.HandleFunc("/file", controllers.GetFile).Methods("GET")
+	router.HandleFunc("/file", controllers.PutFile).Methods("POST")
+	router.HandleFunc("/folder", controllers.GetFolder).Methods("GET")
+	router.HandleFunc("/command", controllers.CommandPost).Methods("POST")
+	router.HandleFunc("/commandparallel", controllers.CommandParallelPost).Methods("POST")
+	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedPost).Methods("POST")
+	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedGetById).Methods("GET")
+
+	//swagger
+	fs := http.FileServer(http.Dir("./swaggerui/"))
+	router.PathPrefix("/swaggerui/").Handler(http.StripPrefix("/swaggerui/", fs))
 
 	err := http.ListenAndServe(":"+appPort, router)
 	if err != nil {
@@ -33,14 +40,14 @@ var SetupServer = func(appPort string) {
 	}
 }
 
-var TokenAuthentication = func(h httprouter.Handle) httprouter.Handle {
-	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+var TokenAuthentication = func(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the Auth Token
 		tokenHeader := r.Header.Get("Token")
 
 		if tokenHeader == os.Getenv("HTTP_AUTH_TOKEN") {
 			// Delegate request to the given handle
-			h(w, r, ps)
+			next.ServeHTTP(w, r)
 		} else {
 			response, _ := json.Marshal(u.ApiMessage(uint32(constants.UNAUTHORIZED),
 				u.GetMessage()[uint32(constants.UNAUTHORIZED)],
@@ -49,5 +56,5 @@ var TokenAuthentication = func(h httprouter.Handle) httprouter.Handle {
 			w.Header().Add("Content-Type", "application/json")
 			http.Error(w, string(response), http.StatusUnauthorized)
 		}
-	}
+	})
 }

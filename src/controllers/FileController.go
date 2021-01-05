@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
-	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
 	"net/http"
 	"path/filepath"
 )
 
-var GetFile = func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+var GetFile = func(w http.ResponseWriter, r *http.Request) {
 	fileName := r.Header.Get("File-Path")
 	if fileName == "" {
 		u.ApiResponse(w, u.ApiMessage(uint32(constants.HTTP_HEADER_NOT_PROVIDED),
@@ -34,7 +33,7 @@ var GetFile = func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 	u.ApiResponseByteArray(w, content)
 }
 
-var PutFile = func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+var PutFile = func(w http.ResponseWriter, r *http.Request) {
 	fileName := r.Header.Get("File-Path")
 	if fileName == "" {
 		u.ApiResponse(w, u.ApiMessage(uint32(constants.HTTP_HEADER_NOT_PROVIDED),

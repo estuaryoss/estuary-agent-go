@@ -6,14 +6,15 @@ import (
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
-	"github.com/julienschmidt/httprouter"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
 )
 
-var GetEnvVar = func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+var GetEnvVar = func(w http.ResponseWriter, r *http.Request) {
 	env := environment.GetInstance()
-	envVar := env.GetEnvAndVirtualEnv()[ps.ByName("name")]
+	params := mux.Vars(r)
+	envVar := env.GetEnvAndVirtualEnv()[params["name"]]
 
 	resp := u.ApiMessage(uint32(constants.SUCCESS),
 		u.GetMessage()[uint32(constants.SUCCESS)],
@@ -22,7 +23,7 @@ var GetEnvVar = func(w http.ResponseWriter, r *http.Request, ps httprouter.Param
 	u.ApiResponse(w, resp)
 }
 
-var GetEnvVars = func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+var GetEnvVars = func(w http.ResponseWriter, r *http.Request) {
 	env := environment.GetInstance()
 	envVars := env.GetEnvAndVirtualEnv()
 
@@ -34,7 +35,7 @@ var GetEnvVars = func(w http.ResponseWriter, r *http.Request, _ httprouter.Param
 	u.ApiResponse(w, resp)
 }
 
-var SetEnvVars = func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+var SetEnvVars = func(w http.ResponseWriter, r *http.Request) {
 	env := environment.GetInstance()
 	body, err := ioutil.ReadAll(r.Body)
 	attemptedEnvVars := make(map[string]string)

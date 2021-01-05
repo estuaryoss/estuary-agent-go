@@ -4,13 +4,12 @@ import (
 	"github.com/estuaryoss/estuary-agent-go/src/command"
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
-	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
 	"net/http"
 	"strings"
 )
 
-var CommandPost = func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+var CommandPost = func(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	commands := u.TrimSpacesAndLineEndings(strings.Split(string(body), "\n"))
 
