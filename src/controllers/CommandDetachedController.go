@@ -26,7 +26,8 @@ var CommandDetachedPost = func(w http.ResponseWriter, r *http.Request) {
 			r.URL.Path))
 		return
 	}
-	cmdBackground := []string{"./runcmd", "--cid=" + cmdId, "--args=" + strings.Join(commands, ";;")}
+	cmdBackground := []string{"./runcmd",
+		"--cid=" + cmdId, "--args=" + strings.Join(commands, ";;"), "--enableStreams=true"}
 	log.Print(fmt.Sprintf("Starting command '%s' in background", strings.Join(cmdBackground, " ")))
 	err := u.StartCommandAndGetError(cmdBackground)
 	if err != nil {
@@ -51,7 +52,7 @@ var CommandDetachedGetById = func(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	cmdId := params["cid"]
 	jsonFileName := fmt.Sprintf(constants.CMD_BACKGROUND_JSON_OUTPUT, cmdId)
-	var cd *models.CommandDescription
+	cd := models.NewCommandDescription()
 
 	err := json.Unmarshal(u.ReadFile(jsonFileName), cd)
 	if err != nil {
@@ -78,7 +79,15 @@ var CommandDetachedGetById = func(w http.ResponseWriter, r *http.Request) {
 
 var CommandDetachedGet = func(w http.ResponseWriter, r *http.Request) {
 	jsonFileName := state.GetLastCommand()
-	var cd *models.CommandDescription
+	cd := models.NewCommandDescription()
+
+	if !u.DoesFileExists(jsonFileName) {
+		u.ApiResponse(w, u.ApiMessage(uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE),
+			u.GetMessage()[uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE)],
+			fmt.Sprintf("File %s does not exists", jsonFileName),
+			r.URL.Path))
+		return
+	}
 
 	err := json.Unmarshal(u.ReadFile(jsonFileName), cd)
 	if err != nil {
