@@ -32,7 +32,7 @@ func AppendFile(fileName string, content string) {
 func ReadFile(fileName string) []byte {
 	content, err := ioutil.ReadFile(fileName)
 	if err != nil {
-		panic(fmt.Sprintf("Failed reading content from file: %s", fileName))
+		log.Fatal(fmt.Sprintf("Failed reading content from file: %s", fileName))
 	}
 	return content
 }

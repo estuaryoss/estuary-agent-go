@@ -3,12 +3,13 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
+
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/estuaryoss/estuary-agent-go/src/controllers"
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
 	"github.com/julienschmidt/httprouter"
-	"net/http"
-	"os"
 )
 
 var SetupServer = func(appPort string) {
@@ -24,6 +25,7 @@ var SetupServer = func(appPort string) {
 	router.POST("/command", TokenAuthentication(controllers.CommandPost))
 	router.POST("/commandparallel", TokenAuthentication(controllers.CommandParallelPost))
 	router.POST("/commanddetached/:cid", TokenAuthentication(controllers.CommandDetachedPost))
+	router.GET("/commanddetached/:cid", TokenAuthentication(controllers.CommandDetachedGetId))
 
 	err := http.ListenAndServe(":"+appPort, router)
 	if err != nil {
