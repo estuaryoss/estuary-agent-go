@@ -30,6 +30,7 @@ var SetupServer = func(appPort string) {
 	router.HandleFunc("/commandparallel", controllers.CommandParallelPost).Methods("POST")
 	router.HandleFunc("/commanddetached", controllers.CommandDetachedGet).Methods("GET")
 	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedPost).Methods("POST")
+	router.HandleFunc("/commanddetachedyaml/{cid}", controllers.CommandDetachedPostYaml).Methods("POST")
 	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedGetById).Methods("GET")
 
 	//swagger
