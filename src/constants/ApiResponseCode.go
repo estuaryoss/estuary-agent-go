@@ -22,5 +22,6 @@ const (
 	SET_ENV_VAR_FAILURE               ApiResponseCode = 1017
 	INVALID_JSON_PAYLOAD              ApiResponseCode = 1018
 	NOT_IMPLEMENTED                   ApiResponseCode = 1019
+	INVALID_YAML_CONFIG               ApiResponseCode = 1020
 	GENERAL                           ApiResponseCode = 1100
 )

@@ -16,4 +16,5 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect
 	github.com/shirou/gopsutil/v3 v3.20.12
 	golang.org/x/sys v0.0.0-20201231184435-2d18734c6014 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
 )

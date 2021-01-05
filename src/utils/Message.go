@@ -23,5 +23,6 @@ func GetMessage() map[uint32]string {
 		uint32(constants.INVALID_JSON_PAYLOAD):              "Invalid json body \"%s\"",
 		uint32(constants.NOT_IMPLEMENTED):                   "Not implemented",
 		uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE): "Failed to get info abut the background command",
+		uint32(constants.INVALID_YAML_CONFIG):               "Invalid yaml config",
 	}
 }

@@ -26,6 +26,7 @@ var SetupServer = func(appPort string) {
 	router.HandleFunc("/file", controllers.PutFile).Methods("POST")
 	router.HandleFunc("/folder", controllers.GetFolder).Methods("GET")
 	router.HandleFunc("/command", controllers.CommandPost).Methods("POST")
+	router.HandleFunc("/commandyaml", controllers.CommandPostYaml).Methods("POST")
 	router.HandleFunc("/commandparallel", controllers.CommandParallelPost).Methods("POST")
 	router.HandleFunc("/commanddetached", controllers.CommandDetachedGet).Methods("GET")
 	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedPost).Methods("POST")
