@@ -9,6 +9,7 @@ import (
 	"github.com/estuaryoss/estuary-agent-go/src/controllers"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -18,6 +19,7 @@ import (
 var SetupServer = func(appPort string) {
 	var router = mux.NewRouter()
 
+	router.Use(AddXRequestId)
 	router.Use(TokenAuthentication)
 
 	router.HandleFunc("/ping", controllers.Ping).Methods("GET")
@@ -64,6 +66,15 @@ var SetupServer = func(appPort string) {
 	}
 }
 
+func AddXRequestId(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		uniqueId := uuid.New().String()
+		w.Header().Add(constants.X_REQUEST_ID, uniqueId)
+		r.Header.Add(constants.X_REQUEST_ID, uniqueId)
+		next.ServeHTTP(w, r)
+	})
+}
+
 var TokenAuthentication = func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the Auth Token
@@ -80,8 +91,6 @@ var TokenAuthentication = func(next http.Handler) http.Handler {
 			w.Header().Add("Content-Type", "application/json")
 			http.Error(w, string(response), http.StatusUnauthorized)
 		}
-		//logging
-		logHttpRequest(r)
 	})
 }
 
