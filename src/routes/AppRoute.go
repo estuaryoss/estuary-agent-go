@@ -3,12 +3,14 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/estuaryoss/estuary-agent-go/logging"
 	"github.com/estuaryoss/estuary-agent-go/services"
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/estuaryoss/estuary-agent-go/src/controllers"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -78,5 +80,15 @@ var TokenAuthentication = func(next http.Handler) http.Handler {
 			w.Header().Add("Content-Type", "application/json")
 			http.Error(w, string(response), http.StatusUnauthorized)
 		}
+		//logging
+		logHttpRequest(r)
 	})
+}
+
+func logHttpRequest(r *http.Request) {
+	request := logging.NewMessageDumper().DumpRequest(r)
+	fluentdLogger := logging.GetInstance()
+	result, _ := json.Marshal(fluentdLogger.Emit(constants.NAME+"."+"api",
+		request, "DEBUG"))
+	log.Print(string(result))
 }

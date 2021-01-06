@@ -33,8 +33,8 @@ func (md *MessageDumper) GetHeaders() map[string]string {
 	return md.headers
 }
 
-func (md *MessageDumper) DumpRequest(r *http.Request) map[interface{}]interface{} {
-	message := make(map[interface{}]interface{})
+func (md *MessageDumper) DumpRequest(r *http.Request) map[string]interface{} {
+	message := make(map[string]interface{})
 	headers := md.getRequestHeaders(r)
 	body, _ := ioutil.ReadAll(r.Body)
 	finalMessage := make(map[string]string)

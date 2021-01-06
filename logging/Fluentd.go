@@ -1,6 +1,7 @@
 package logging
 
 import (
+	"errors"
 	"fmt"
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
@@ -28,7 +29,7 @@ func GetInstance() *Fluentd {
 	once.Do(
 		func() {
 			singleton = &Fluentd{
-				logger: GetFluentdLogger(),
+				logger: getFluentdLogger(),
 			}
 		})
 	return singleton
@@ -36,7 +37,6 @@ func GetInstance() *Fluentd {
 
 func (f *Fluentd) enrichLog(levelCode string, msg interface{}) map[string]interface{} {
 	plat, fam, ver, _ := host.PlatformInformation()
-	constants.About()
 	enrichedLog := make(map[string]interface{})
 	enrichedLog["name"] = constants.NAME
 	enrichedLog["port"] = environment.GetInstance().GetConfigEnvVars()[constants.PORT]
@@ -53,26 +53,26 @@ func (f *Fluentd) enrichLog(levelCode string, msg interface{}) map[string]interf
 
 func (f *Fluentd) Emit(tag string, msg map[string]interface{}, level string) interface{} {
 	consoleMessage := make(map[string]interface{})
-	var isMessageSent = true
 	enrichedLog := f.enrichLog(level, msg)
-	err := f.send(tag, enrichedLog)
-	if err != nil {
-		isMessageSent = false
-	}
+	emit := f.send(tag, enrichedLog)
 	consoleMessage["message"] = enrichedLog
-	consoleMessage["emit"] = isMessageSent
+	consoleMessage["emit"] = emit
 
 	return consoleMessage
 }
 
-func (f *Fluentd) send(tag string, msg map[string]interface{}) error {
+func (f *Fluentd) send(tag string, msg map[string]interface{}) bool {
+	var err error = errors.New("Fluentd logging is not enabled")
 	if environment.GetInstance().GetConfigEnvVars()[constants.FLUENTD_IP_PORT] != "" {
-		return f.logger.Post(tag, msg)
+		err = f.logger.Post(tag, msg)
 	}
-	return nil
+	if err == nil {
+		return true
+	}
+	return false
 }
 
-func GetFluentdLogger() *fluent.Fluent {
+func getFluentdLogger() *fluent.Fluent {
 	fluentdIpPort := environment.GetInstance().GetConfigEnvVars()[constants.FLUENTD_IP_PORT]
 	if fluentdIpPort != "" {
 		fluentdIpPortArray := strings.Split(fluentdIpPort, ":")

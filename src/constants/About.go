@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	NAME    = "estuary-agent-go"
+	NAME    = "estuary-agent"
 	VERSION = "4.1.0"
 )
 
