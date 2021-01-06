@@ -36,14 +36,10 @@ func GetInstance() *Fluentd {
 
 func (f *Fluentd) enrichLog(levelCode string, msg interface{}) map[string]interface{} {
 	plat, fam, ver, _ := host.PlatformInformation()
-	port := 8080
-	if environment.GetInstance().GetEnv()[constants.PORT] != "" {
-		port, _ = strconv.Atoi(environment.GetInstance().GetEnv()[constants.PORT])
-	}
 	constants.About()
 	enrichedLog := make(map[string]interface{})
 	enrichedLog["name"] = constants.NAME
-	enrichedLog["port"] = port
+	enrichedLog["port"] = environment.GetInstance().GetConfigEnvVars()[constants.PORT]
 	enrichedLog["version"] = constants.VERSION
 	enrichedLog["uname"] = []string{plat, fam, ver}
 	enrichedLog["golang"] = runtime.Version()
@@ -70,14 +66,14 @@ func (f *Fluentd) Emit(tag string, msg map[string]interface{}, level string) int
 }
 
 func (f *Fluentd) send(tag string, msg map[string]interface{}) error {
-	if environment.GetInstance().GetEnv()[constants.FLUENTD_IP_PORT] != "" {
+	if environment.GetInstance().GetConfigEnvVars()[constants.FLUENTD_IP_PORT] != "" {
 		return f.logger.Post(tag, msg)
 	}
 	return nil
 }
 
 func GetFluentdLogger() *fluent.Fluent {
-	fluentdIpPort := environment.GetInstance().GetEnv()[constants.FLUENTD_IP_PORT]
+	fluentdIpPort := environment.GetInstance().GetConfigEnvVars()[constants.FLUENTD_IP_PORT]
 	if fluentdIpPort != "" {
 		fluentdIpPortArray := strings.Split(fluentdIpPort, ":")
 		fluentdIp := fluentdIpPortArray[0]

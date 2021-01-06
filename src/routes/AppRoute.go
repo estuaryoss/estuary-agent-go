@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/estuaryoss/estuary-agent-go/services"
+	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/estuaryoss/estuary-agent-go/src/controllers"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
+	u "github.com/estuaryoss/estuary-agent-go/src/utils"
 	"github.com/gorilla/mux"
 	"net/http"
-	"os"
-
-	"github.com/estuaryoss/estuary-agent-go/src/constants"
-	u "github.com/estuaryoss/estuary-agent-go/src/utils"
+	"strconv"
 )
 
 var SetupServer = func(appPort string) {
@@ -36,15 +35,28 @@ var SetupServer = func(appPort string) {
 	router.HandleFunc("/commanddetachedyaml/{cid}", controllers.CommandDetachedPostYaml).Methods("POST")
 	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedGetById).Methods("GET")
 
+	//init env
+	environment.GetInstance().InitConfigEnvVars()
+
 	//swagger
 	fs := http.FileServer(http.Dir("./swaggerui/"))
 	router.PathPrefix("/swaggerui/").Handler(http.StripPrefix("/swaggerui/", fs))
 
 	//eureka registration
 	ec := services.NewEurekaClient()
-	ec.RegisterApp(environment.GetInstance().GetEnv()[constants.APP_IP_PORT])
+	ec.RegisterApp(environment.GetInstance().GetConfigEnvVars()[constants.APP_IP_PORT])
 
-	err := http.ListenAndServe(":"+appPort, router)
+	var err error
+	isHttps, _ := strconv.ParseBool(environment.GetInstance().GetConfigEnvVars()[constants.HTTPS_ENABLE])
+	if isHttps == true {
+		err = http.ListenAndServeTLS(":"+environment.GetInstance().GetConfigEnvVars()[constants.PORT],
+			environment.GetInstance().GetConfigEnvVars()[constants.HTTPS_CERT],
+			environment.GetInstance().GetConfigEnvVars()[constants.HTTPS_KEY],
+			router)
+	} else {
+		err = http.ListenAndServe(":"+environment.GetInstance().GetConfigEnvVars()[constants.PORT], router)
+	}
+
 	if err != nil {
 		fmt.Print(err)
 	}
@@ -55,7 +67,7 @@ var TokenAuthentication = func(next http.Handler) http.Handler {
 		// Get the Auth Token
 		tokenHeader := r.Header.Get("Token")
 
-		if tokenHeader == os.Getenv("HTTP_AUTH_TOKEN") {
+		if tokenHeader == environment.GetInstance().GetConfigEnvVars()[constants.HTTP_AUTH_TOKEN] {
 			// Delegate request to the given handle
 			next.ServeHTTP(w, r)
 		} else {

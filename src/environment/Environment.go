@@ -1,6 +1,7 @@
 package environment
 
 import (
+	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/magiconair/properties"
 	"os"
 	"strings"
@@ -10,6 +11,7 @@ import (
 var once sync.Once
 
 type Env struct {
+	configEnvVars  map[string]string
 	env            map[string]string
 	virtualEnv     map[string]string
 	virtualEnvSize int
@@ -21,6 +23,7 @@ func GetInstance() *Env {
 	once.Do(
 		func() {
 			singleton = &Env{
+				configEnvVars:  map[string]string{},
 				env:            GetEnvAsMap(),
 				virtualEnv:     map[string]string{},
 				virtualEnvSize: 100,
@@ -28,6 +31,60 @@ func GetInstance() *Env {
 			singleton.SetEnvVars(GetVirtualEnvAsMapFromFile())
 		})
 	return singleton
+}
+
+func (env *Env) InitConfigEnvVars() map[string]string {
+	initEnvVars := make(map[string]string)
+
+	port := "8080"
+	if env.GetEnv()[constants.PORT] != "" {
+		port = env.GetEnv()[constants.PORT]
+	}
+
+	fluentdIpPort := ""
+	if env.GetEnv()[constants.FLUENTD_IP_PORT] != "" {
+		fluentdIpPort = env.GetEnv()[constants.FLUENTD_IP_PORT]
+	}
+
+	eurekaServer := ""
+	if env.GetEnv()[constants.EUREKA_SERVER] != "" {
+		eurekaServer = env.GetEnv()[constants.EUREKA_SERVER]
+	}
+
+	appIpPort := "localhost:8080"
+	if env.GetEnv()[constants.APP_IP_PORT] != "" {
+		appIpPort = env.GetEnv()[constants.APP_IP_PORT]
+	}
+
+	enableHttps := "false"
+	if env.GetEnv()[constants.HTTPS_ENABLE] != "" {
+		enableHttps = env.GetEnv()[constants.HTTPS_ENABLE]
+	}
+
+	httpsCert := "./https/cert.pem"
+	if env.GetEnv()[constants.HTTPS_CERT] != "" {
+		httpsCert = env.GetEnv()[constants.HTTPS_CERT]
+	}
+
+	httpsKey := "./https/key.pem"
+	if env.GetEnv()[constants.HTTPS_KEY] != "" {
+		enableHttps = env.GetEnv()[constants.HTTPS_KEY]
+	}
+	initEnvVars[constants.FLUENTD_IP_PORT] = fluentdIpPort
+	initEnvVars[constants.PORT] = port
+	initEnvVars[constants.EUREKA_SERVER] = eurekaServer
+	initEnvVars[constants.APP_IP_PORT] = appIpPort
+	initEnvVars[constants.HTTPS_ENABLE] = enableHttps
+	initEnvVars[constants.HTTPS_CERT] = httpsCert
+	initEnvVars[constants.HTTPS_KEY] = httpsKey
+
+	env.configEnvVars = initEnvVars
+
+	return initEnvVars
+}
+
+func (env *Env) GetConfigEnvVars() map[string]string {
+	return env.configEnvVars
 }
 
 func (env *Env) GetEnv() map[string]string {
