@@ -41,7 +41,7 @@ func WriteFile(fileName string, content []byte) {
 	CreateFileIfNotExist(fileName)
 	err := ioutil.WriteFile(fileName, content, 0644)
 	if err != nil {
-		panic(fmt.Sprintf("Failed writing content to file: %s", fileName))
+		log.Printf(fmt.Sprintf("Failed writing content to file: %s", fileName))
 	}
 }
 
@@ -49,11 +49,11 @@ func WriteFileJson(fileName string, content interface{}) {
 	CreateFileIfNotExist(fileName)
 	jsonContent, err := json.Marshal(content)
 	if err != nil {
-		panic(fmt.Sprintf("Failed writing JSON content to file: %s", fileName))
+		log.Printf(fmt.Sprintf("Failed writing JSON content to file: %s", fileName))
 	}
 	err = ioutil.WriteFile(fileName, jsonContent, 0644)
 	if err != nil {
-		panic(fmt.Sprintf("Failed writing content to file: %s", fileName))
+		log.Printf(fmt.Sprintf("Failed writing content to file: %s", fileName))
 	}
 }
 
@@ -63,7 +63,7 @@ func CreateFileIfNotExist(fileName string) {
 	}
 	emptyFile, err := os.Create(fileName)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to create empty file: %s", fileName))
+		log.Printf(fmt.Sprintf("Failed to create empty file: %s", fileName))
 	}
 	emptyFile.Close()
 }
@@ -74,7 +74,7 @@ func CreateDir(dirName string) {
 	}
 	err := os.Mkdir(dirName, 0644)
 	if err != nil {
-		panic(fmt.Sprintf("Failed creating dir: %s", dirName))
+		log.Print(fmt.Sprintf("Failed creating dir: %s", dirName))
 	}
 }
 
@@ -89,7 +89,7 @@ func DeleteFile(fileName string) {
 	}
 	err := os.Remove(fileName)
 	if err != nil {
-		panic(fmt.Sprintf("Failed to delete file: %s", fileName))
+		log.Printf(fmt.Sprintf("Failed to delete file: %s", fileName))
 	}
 }
 
@@ -97,7 +97,7 @@ func DeleteFiles(fileNames []string) {
 	for _, fileName := range fileNames {
 		err := os.Remove(fileName)
 		if err != nil {
-			panic(fmt.Sprintf("Failed to delete file: %s", fileName))
+			log.Printf(fmt.Sprintf("Failed to delete file: %s", fileName))
 		}
 	}
 }
@@ -111,7 +111,7 @@ func RecreateFiles(fileNames []string) {
 func OpenFile(fileName string) *os.File {
 	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
-		panic(err.Error())
+		log.Printf(err.Error())
 	}
 	return file
 }

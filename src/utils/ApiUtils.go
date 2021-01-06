@@ -2,7 +2,6 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"io"
 	"net/http"
@@ -11,9 +10,7 @@ import (
 
 func ApiMessage(code uint32, message string, description interface{}, path string) map[string]interface{} {
 	t := time.Now()
-	timestamp := fmt.Sprintf("%d-%02d-%02d %02d:%02d:%02d.%02d",
-		t.Year(), t.Month(), t.Day(),
-		t.Hour(), t.Minute(), t.Second(), t.Nanosecond()/1000)
+	timestamp := GetFormattedTimeAsString(t)
 
 	return map[string]interface{}{
 		"code":        code,

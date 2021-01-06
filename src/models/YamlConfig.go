@@ -47,8 +47,6 @@ func (config *YamlConfig) SetAfterInstall(afterInstall []string) {
 	config.AfterInstall = afterInstall
 }
 
-//
-
 func (config *YamlConfig) GetBeforeScript() []string {
 	return config.BeforeScript
 }

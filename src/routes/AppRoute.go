@@ -3,7 +3,9 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/estuaryoss/estuary-agent-go/services"
 	"github.com/estuaryoss/estuary-agent-go/src/controllers"
+	"github.com/estuaryoss/estuary-agent-go/src/environment"
 	"github.com/gorilla/mux"
 	"net/http"
 	"os"
@@ -22,6 +24,7 @@ var SetupServer = func(appPort string) {
 	router.HandleFunc("/env", controllers.SetEnvVars).Methods("POST")
 	router.HandleFunc("/env/{name}", controllers.GetEnvVar).Methods("GET")
 	router.HandleFunc("/about", controllers.About).Methods("GET")
+	router.HandleFunc("/info", controllers.About).Methods("GET")
 	router.HandleFunc("/file", controllers.GetFile).Methods("GET")
 	router.HandleFunc("/file", controllers.PutFile).Methods("POST")
 	router.HandleFunc("/folder", controllers.GetFolder).Methods("GET")
@@ -36,6 +39,10 @@ var SetupServer = func(appPort string) {
 	//swagger
 	fs := http.FileServer(http.Dir("./swaggerui/"))
 	router.PathPrefix("/swaggerui/").Handler(http.StripPrefix("/swaggerui/", fs))
+
+	//eureka registration
+	ec := services.NewEurekaClient()
+	ec.RegisterApp(environment.GetInstance().GetEnv()[constants.APP_IP_PORT])
 
 	err := http.ListenAndServe(":"+appPort, router)
 	if err != nil {
