@@ -40,7 +40,7 @@ var SetEnvVars = func(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	attemptedEnvVars := make(map[string]string)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.SET_ENV_VAR_FAILURE),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.SET_ENV_VAR_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.SET_ENV_VAR_FAILURE)], string(body)),
 			err.Error(),
 			r.URL.Path))
@@ -49,7 +49,7 @@ var SetEnvVars = func(w http.ResponseWriter, r *http.Request) {
 
 	err = json.Unmarshal(body, &attemptedEnvVars)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.SET_ENV_VAR_FAILURE),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.SET_ENV_VAR_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.SET_ENV_VAR_FAILURE)], string(body)),
 			err.Error(),
 			r.URL.Path))

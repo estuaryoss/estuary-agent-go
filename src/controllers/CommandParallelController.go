@@ -13,7 +13,7 @@ var CommandParallelPost = func(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	commands := u.TrimSpacesAndLineEndings(strings.Split(string(body), "\n"))
 	if len(commands) == 0 {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.EMPTY_REQUEST_BODY_PROVIDED),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.EMPTY_REQUEST_BODY_PROVIDED),
 			u.GetMessage()[uint32(constants.EMPTY_REQUEST_BODY_PROVIDED)],
 			u.GetMessage()[uint32(constants.EMPTY_REQUEST_BODY_PROVIDED)],
 			r.URL.Path))

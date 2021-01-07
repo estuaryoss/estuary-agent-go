@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
@@ -20,9 +21,10 @@ var CommandDetachedPost = func(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	params := mux.Vars(r)
 	cmdId := params["cid"]
-	commands := u.TrimSpacesAndLineEndings(strings.Split(string(body), "\n"))
+	commands := u.TrimSpacesAndLineEndings(
+		strings.Split(strings.Trim(string(body), " "), "\n"))
 	if len(commands) == 0 {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.EMPTY_REQUEST_BODY_PROVIDED),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.EMPTY_REQUEST_BODY_PROVIDED),
 			u.GetMessage()[uint32(constants.EMPTY_REQUEST_BODY_PROVIDED)],
 			u.GetMessage()[uint32(constants.EMPTY_REQUEST_BODY_PROVIDED)],
 			r.URL.Path))
@@ -35,7 +37,7 @@ var CommandDetachedPost = func(w http.ResponseWriter, r *http.Request) {
 	err := cmd.Start()
 	state.GetInstance().AddCmdToCommandList(cmdId, cmd)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.COMMAND_DETACHED_START_FAILURE),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.COMMAND_DETACHED_START_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.COMMAND_DETACHED_START_FAILURE)], cmdId),
 			err.Error(),
 			r.URL.Path))
@@ -56,8 +58,8 @@ var CommandDetachedPostYaml = func(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	params := mux.Vars(r)
 	cmdId := params["cid"]
-	if len(string(body)) == 0 {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.EMPTY_REQUEST_BODY_PROVIDED),
+	if len(strings.Trim(string(body), " ")) == 0 {
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.EMPTY_REQUEST_BODY_PROVIDED),
 			u.GetMessage()[uint32(constants.EMPTY_REQUEST_BODY_PROVIDED)],
 			u.GetMessage()[uint32(constants.EMPTY_REQUEST_BODY_PROVIDED)],
 			r.URL.Path))
@@ -68,7 +70,7 @@ var CommandDetachedPostYaml = func(w http.ResponseWriter, r *http.Request) {
 	var configParser = u.NewYamlConfigParser()
 	err := yaml.Unmarshal(body, &yamlConfig)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.INVALID_YAML_CONFIG),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.INVALID_YAML_CONFIG),
 			u.GetMessage()[uint32(constants.INVALID_YAML_CONFIG)],
 			err.Error(),
 			r.URL.Path))
@@ -76,7 +78,7 @@ var CommandDetachedPostYaml = func(w http.ResponseWriter, r *http.Request) {
 	}
 	err = configParser.CheckConfig(yamlConfig)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.INVALID_YAML_CONFIG),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.INVALID_YAML_CONFIG),
 			u.GetMessage()[uint32(constants.INVALID_YAML_CONFIG)],
 			err.Error(),
 			r.URL.Path))
@@ -92,7 +94,7 @@ var CommandDetachedPostYaml = func(w http.ResponseWriter, r *http.Request) {
 	err = cmd.Start()
 	state.GetInstance().AddCmdToCommandList(cmdId, cmd)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.COMMAND_DETACHED_START_FAILURE),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.COMMAND_DETACHED_START_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.COMMAND_DETACHED_START_FAILURE)], cmdId),
 			err.Error(),
 			r.URL.Path))
@@ -117,7 +119,7 @@ var CommandDetachedGetById = func(w http.ResponseWriter, r *http.Request) {
 
 	err := json.Unmarshal(u.ReadFile(jsonFileName), cd)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE),
 			u.GetMessage()[uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE)],
 			err.Error(),
 			r.URL.Path))
@@ -143,7 +145,7 @@ var CommandDetachedGet = func(w http.ResponseWriter, r *http.Request) {
 	cd := models.NewCommandDescription()
 
 	if !u.DoesFileExists(jsonFileName) {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE),
 			u.GetMessage()[uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE)],
 			fmt.Sprintf("File %s does not exists", jsonFileName),
 			r.URL.Path))
@@ -152,7 +154,7 @@ var CommandDetachedGet = func(w http.ResponseWriter, r *http.Request) {
 
 	err := json.Unmarshal(u.ReadFile(jsonFileName), cd)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE),
 			u.GetMessage()[uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE)],
 			err.Error(),
 			r.URL.Path))
@@ -188,6 +190,13 @@ var CommandDetachedDelete = func(w http.ResponseWriter, r *http.Request) {
 var CommandDetachedDeleteById = func(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	cmdId := params["cid"]
+	if state.GetInstance().GetBackgroundCommandList()[cmdId] == nil {
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.COMMAND_DETACHED_STOP_FAILURE),
+			u.GetMessage()[uint32(constants.COMMAND_DETACHED_STOP_FAILURE)],
+			errors.New(fmt.Sprintf("Exception: There is no active process for command %s", cmdId)).Error(),
+			r.URL.Path))
+		return
+	}
 	u.KillProcess(cmdId)
 
 	resp := u.ApiMessage(uint32(constants.SUCCESS),

@@ -28,6 +28,12 @@ func ApiResponse(w http.ResponseWriter, data map[string]interface{}) {
 	json.NewEncoder(w).Encode(data)
 }
 
+func ApiResponseError(w http.ResponseWriter, data map[string]interface{}) {
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusInternalServerError)
+	json.NewEncoder(w).Encode(data)
+}
+
 func ApiResponseByteArray(w http.ResponseWriter, data []byte) {
 	w.Header().Add("Content-Type", "application/octet-stream")
 	io.Writer.Write(w, data)

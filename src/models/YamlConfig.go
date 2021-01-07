@@ -1,13 +1,13 @@
 package models
 
 type YamlConfig struct {
-	Env           map[string]string `yaml:"env"`
-	BeforeInstall []string          `yaml:"before_install"`
-	Install       []string          `yaml:"install"`
-	AfterInstall  []string          `yaml:"after_install"`
-	BeforeScript  []string          `yaml:"before_script"`
-	Script        []string          `yaml:"script"`
-	AfterScript   []string          `yaml:"after_script"`
+	Env           map[string]string `yaml:"env" json:"env,omitempty"`
+	BeforeInstall []string          `yaml:"before_install" json:"before_install,omitempty"`
+	Install       []string          `yaml:"install" json:"install,omitempty"`
+	AfterInstall  []string          `yaml:"after_install" json:"after_install,omitempty"`
+	BeforeScript  []string          `yaml:"before_script" json:"before_script,omitempty"`
+	Script        []string          `yaml:"script" json:"script,omitempty"`
+	AfterScript   []string          `yaml:"after_script" json:"after_script,omitempty"`
 }
 
 func NewYamlConfig() *YamlConfig {

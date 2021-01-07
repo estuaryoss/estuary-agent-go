@@ -16,7 +16,7 @@ import (
 var GetFolder = func(w http.ResponseWriter, r *http.Request) {
 	folderName := r.Header.Get("Folder-Path")
 	if folderName == "" {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.HTTP_HEADER_NOT_PROVIDED),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.HTTP_HEADER_NOT_PROVIDED),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], folderName),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], folderName),
 			r.URL.Path))
@@ -26,7 +26,7 @@ var GetFolder = func(w http.ResponseWriter, r *http.Request) {
 	zipFileName := "response.zip"
 	err := zipFolder(folderName, zipFileName)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.FOLDER_ZIP_FAILURE),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.FOLDER_ZIP_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.FOLDER_ZIP_FAILURE)], folderName),
 			err.Error(),
 			r.URL.Path))
@@ -35,7 +35,7 @@ var GetFolder = func(w http.ResponseWriter, r *http.Request) {
 
 	content, err := ioutil.ReadFile(zipFileName)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.GET_FILE_FAILURE),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.GET_FILE_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.GET_FILE_FAILURE)], folderName),
 			err.Error(),
 			r.URL.Path))

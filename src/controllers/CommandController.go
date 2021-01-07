@@ -17,7 +17,7 @@ var CommandPost = func(w http.ResponseWriter, r *http.Request) {
 	commands := u.TrimSpacesAndLineEndings(strings.Split(string(body), "\n"))
 
 	if len(commands) == 0 {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.EMPTY_REQUEST_BODY_PROVIDED),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.EMPTY_REQUEST_BODY_PROVIDED),
 			u.GetMessage()[uint32(constants.EMPTY_REQUEST_BODY_PROVIDED)],
 			u.GetMessage()[uint32(constants.EMPTY_REQUEST_BODY_PROVIDED)],
 			r.URL.Path))
@@ -38,7 +38,7 @@ var CommandPostYaml = func(w http.ResponseWriter, r *http.Request) {
 	commands := u.TrimSpacesAndLineEndings(strings.Split(string(body), "\n"))
 
 	if len(commands) == 0 {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.EMPTY_REQUEST_BODY_PROVIDED),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.EMPTY_REQUEST_BODY_PROVIDED),
 			u.GetMessage()[uint32(constants.EMPTY_REQUEST_BODY_PROVIDED)],
 			u.GetMessage()[uint32(constants.EMPTY_REQUEST_BODY_PROVIDED)],
 			r.URL.Path))
@@ -49,7 +49,7 @@ var CommandPostYaml = func(w http.ResponseWriter, r *http.Request) {
 	var configParser = u.NewYamlConfigParser()
 	err := yaml.Unmarshal(body, &yamlConfig)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.INVALID_YAML_CONFIG),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.INVALID_YAML_CONFIG),
 			u.GetMessage()[uint32(constants.INVALID_YAML_CONFIG)],
 			err.Error(),
 			r.URL.Path))
@@ -57,20 +57,22 @@ var CommandPostYaml = func(w http.ResponseWriter, r *http.Request) {
 	}
 	err = configParser.CheckConfig(yamlConfig)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.INVALID_YAML_CONFIG),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.INVALID_YAML_CONFIG),
 			u.GetMessage()[uint32(constants.INVALID_YAML_CONFIG)],
 			err.Error(),
 			r.URL.Path))
 		return
 	}
 	envVars := yamlConfig.GetEnv()
-	environment.GetInstance().SetEnvVars(envVars)
+	envVarsSet := environment.GetInstance().SetEnvVars(envVars)
 
 	cim := command.NewCommandInMemory()
 	commandDescription := cim.RunCommands(configParser.GetCommandsList(yamlConfig))
+	yamlConfig.SetEnv(envVarsSet)
+	models.SetDescription(yamlConfig, commandDescription)
 	resp := u.ApiMessage(uint32(constants.SUCCESS),
 		u.GetMessage()[uint32(constants.SUCCESS)],
-		commandDescription,
+		models.GetDescription(),
 		r.URL.Path)
 
 	u.ApiResponse(w, resp)
