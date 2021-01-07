@@ -81,7 +81,7 @@ func RunCommandNoFile(command string, cmdId string) *models.CommandDetails {
 	cd.SetErr(fmt.Sprint(cmd.Stderr))
 	cd.SetOut(fmt.Sprint(cmd.Stdout))
 	cd.SetCode(cmd.ProcessState.ExitCode())
-	cd.SetPid(cmd.ProcessState.Pid())
+	cd.SetPid(cmd.Process.Pid)
 	cd.SetArgs(cmd.Args)
 
 	log.Printf("Executed command \"%s\", with process id %d\n", command, cmd.ProcessState.Pid())

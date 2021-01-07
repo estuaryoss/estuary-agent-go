@@ -17,6 +17,7 @@ require (
 	github.com/lib/pq v1.9.0 // indirect
 	github.com/magiconair/properties v1.8.4
 	github.com/mattn/go-sqlite3 v1.14.6 // indirect
+	github.com/mitchellh/go-ps v1.0.0
 	github.com/shirou/gopsutil/v3 v3.20.12
 	github.com/tinylib/msgp v1.1.5 // indirect
 	golang.org/x/sys v0.0.0-20201231184435-2d18734c6014 // indirect
