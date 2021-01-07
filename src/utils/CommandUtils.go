@@ -101,13 +101,13 @@ func StartCommand(command string) *exec.Cmd {
 	return cmd
 }
 
-func StartCommandAndGetError(command []string) error {
+func GetCommand(command []string) *exec.Cmd {
 	cmdName := command[0]
 	cmdArgs := command[1:]
 	cmd := exec.Command(cmdName, cmdArgs...)
 	cmd.Env = environment.GetInstance().GetEnvAndVirtualEnvArray()
 
-	return cmd.Start()
+	return cmd
 }
 
 /**

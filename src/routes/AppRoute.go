@@ -35,9 +35,11 @@ var SetupServer = func(appPort string) {
 	router.HandleFunc("/commandyaml", controllers.CommandPostYaml).Methods("POST")
 	router.HandleFunc("/commandparallel", controllers.CommandParallelPost).Methods("POST")
 	router.HandleFunc("/commanddetached", controllers.CommandDetachedGet).Methods("GET")
+	router.HandleFunc("/commanddetached", controllers.CommandDetachedDelete).Methods("DELETE")
 	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedPost).Methods("POST")
 	router.HandleFunc("/commanddetachedyaml/{cid}", controllers.CommandDetachedPostYaml).Methods("POST")
 	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedGetById).Methods("GET")
+	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedDeleteById).Methods("DELETE")
 
 	//init env
 	environment.GetInstance().InitConfigEnvVars()
@@ -69,8 +71,13 @@ var SetupServer = func(appPort string) {
 func AddXRequestId(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		uniqueId := uuid.New().String()
-		w.Header().Add(constants.X_REQUEST_ID, uniqueId)
-		r.Header.Add(constants.X_REQUEST_ID, uniqueId)
+		xRequestIdRequest := r.Header.Get(constants.X_REQUEST_ID)
+		if xRequestIdRequest != "" {
+			w.Header().Add(constants.X_REQUEST_ID, xRequestIdRequest)
+		} else {
+			w.Header().Add(constants.X_REQUEST_ID, uniqueId)
+			r.Header.Add(constants.X_REQUEST_ID, uniqueId)
+		}
 		next.ServeHTTP(w, r)
 	})
 }

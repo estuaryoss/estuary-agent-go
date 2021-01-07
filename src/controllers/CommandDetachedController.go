@@ -31,7 +31,9 @@ var CommandDetachedPost = func(w http.ResponseWriter, r *http.Request) {
 	cmdBackground := []string{"./runcmd",
 		"--cid=" + cmdId, "--args=" + strings.Join(commands, ";;"), "--enableStreams=true"}
 	log.Print(fmt.Sprintf("Starting command '%s' in background", strings.Join(cmdBackground, " ")))
-	err := u.StartCommandAndGetError(cmdBackground)
+	cmd := u.GetCommand(cmdBackground)
+	err := cmd.Start()
+	state.GetInstance().AddCmdToCommandList(cmdId, cmd)
 	if err != nil {
 		u.ApiResponse(w, u.ApiMessage(uint32(constants.COMMAND_DETACHED_START_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.COMMAND_DETACHED_START_FAILURE)], cmdId),
@@ -86,7 +88,9 @@ var CommandDetachedPostYaml = func(w http.ResponseWriter, r *http.Request) {
 	cmdBackground := []string{"./runcmd",
 		"--cid=" + cmdId, "--args=" + strings.Join(configParser.GetCommandsList(yamlConfig), ";;"), "--enableStreams=true"}
 	log.Print(fmt.Sprintf("Starting command '%s' in background", strings.Join(cmdBackground, " ")))
-	err = u.StartCommandAndGetError(cmdBackground)
+	cmd := u.GetCommand(cmdBackground)
+	err = cmd.Start()
+	state.GetInstance().AddCmdToCommandList(cmdId, cmd)
 	if err != nil {
 		u.ApiResponse(w, u.ApiMessage(uint32(constants.COMMAND_DETACHED_START_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.COMMAND_DETACHED_START_FAILURE)], cmdId),
@@ -165,6 +169,30 @@ var CommandDetachedGet = func(w http.ResponseWriter, r *http.Request) {
 	resp := u.ApiMessage(uint32(constants.SUCCESS),
 		u.GetMessage()[uint32(constants.SUCCESS)],
 		cd,
+		r.URL.Path)
+
+	u.ApiResponse(w, resp)
+}
+
+var CommandDetachedDelete = func(w http.ResponseWriter, r *http.Request) {
+	u.KillAllProcesses()
+
+	resp := u.ApiMessage(uint32(constants.SUCCESS),
+		u.GetMessage()[uint32(constants.SUCCESS)],
+		u.GetMessage()[uint32(constants.SUCCESS)],
+		r.URL.Path)
+
+	u.ApiResponse(w, resp)
+}
+
+var CommandDetachedDeleteById = func(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	cmdId := params["cid"]
+	u.KillProcess(cmdId)
+
+	resp := u.ApiMessage(uint32(constants.SUCCESS),
+		u.GetMessage()[uint32(constants.SUCCESS)],
+		u.GetMessage()[uint32(constants.SUCCESS)],
 		r.URL.Path)
 
 	u.ApiResponse(w, resp)
