@@ -1,5 +1,8 @@
 FROM golang:1.15-alpine3.12
 
+#!!! issues for command in background. Previous background commands seems to be killed
+#!!! only on alpine. OK on win and ubuntu
+
 ENV APP_DIR /app
 ENV PORT 8080
 #ENV HTTP_AUTH_TOKEN None
@@ -9,5 +12,8 @@ RUN mkdir $APP_DIR
 WORKDIR $APP_DIR
 
 COPY ./ $APP_DIR
+ADD https://estuary-agent-go.s3.eu-central-1.amazonaws.com/4.1.0/runcmd-alpine $APP_DIR/runcmd
+
+RUN chmod +x runcmd
 
 CMD ["go", "run", "Main.go"]

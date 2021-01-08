@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
-	"github.com/julienschmidt/httprouter"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -14,20 +13,27 @@ import (
 	"strings"
 )
 
-var GetFolder = func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	folderName := r.Header.Get("Folder-Path")
+var GetFolder = func(w http.ResponseWriter, r *http.Request) {
+	folderHeader := "Folder-Path"
+	folderName := r.Header.Get(folderHeader)
 	if folderName == "" {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.HTTP_HEADER_NOT_PROVIDED),
-			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], folderName),
-			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], folderName),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.HTTP_HEADER_NOT_PROVIDED),
+			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], folderHeader),
+			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], folderHeader),
 			r.URL.Path))
 		return
 	}
-
+	if !u.IsFolder(folderName) {
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.FOLDER_ZIP_FAILURE),
+			fmt.Sprintf(u.GetMessage()[uint32(constants.FOLDER_ZIP_FAILURE)], folderName),
+			fmt.Sprintf("Path %s is not a folder", folderName),
+			r.URL.Path))
+		return
+	}
 	zipFileName := "response.zip"
 	err := zipFolder(folderName, zipFileName)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.FOLDER_ZIP_FAILURE),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.FOLDER_ZIP_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.FOLDER_ZIP_FAILURE)], folderName),
 			err.Error(),
 			r.URL.Path))
@@ -36,7 +42,7 @@ var GetFolder = func(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 
 	content, err := ioutil.ReadFile(zipFileName)
 	if err != nil {
-		u.ApiResponse(w, u.ApiMessage(uint32(constants.GET_FILE_FAILURE),
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.GET_FILE_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.GET_FILE_FAILURE)], folderName),
 			err.Error(),
 			r.URL.Path))

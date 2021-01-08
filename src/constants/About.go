@@ -11,7 +11,7 @@ import (
 
 const (
 	NAME    = "estuary-agent"
-	VERSION = "4.1.0"
+	VERSION = "4.4.0"
 )
 
 func About() map[string]interface{} {
@@ -26,7 +26,7 @@ func About() map[string]interface{} {
 		"version":      ver,
 		"architecture": runtime.GOARCH,
 		"machine":      "NA",
-		"layer":        "getLayer()",
+		"layer":        getLayer(),
 		"hostname":     hostname,
 		"cpu":          cpuInfo[0].ModelName,
 		"ram":          fmt.Sprint(virtualMemory.Total/(1024*1024*1024), " GB"),
