@@ -40,14 +40,14 @@ var CommandDetachedPost = func(w http.ResponseWriter, r *http.Request) {
 			" --enableStreams=true"}
 	}
 	log.Print(fmt.Sprintf("Starting command '%s' in background", strings.Join(cmdBackground, " ")))
-	cmd := u.GetCommand(cmdBackground)
-	err := cmd.Start()
-
-	state.GetInstance().AddCmdToCommandList(cmdId, cmd)
+	u.KillCmdBackgroundProcess(cmdId)
+	ch := make(chan error)
+	go u.StartCommand(cmdId, cmdBackground, ch)
+	err := <-ch
 	if err != nil {
 		u.ApiResponseError(w, u.ApiMessage(uint32(constants.COMMAND_DETACHED_START_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.COMMAND_DETACHED_START_FAILURE)], cmdId),
-			fmt.Sprint(cmd.Stderr),
+			err,
 			r.URL.Path))
 		return
 	}
@@ -105,9 +105,10 @@ var CommandDetachedPostYaml = func(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Print(fmt.Sprintf("Starting command '%s' in background", strings.Join(cmdBackground, " ")))
-	cmd := u.GetCommand(cmdBackground)
-	err = cmd.Start()
-	state.GetInstance().AddCmdToCommandList(cmdId, cmd)
+	u.KillCmdBackgroundProcess(cmdId)
+	ch := make(chan error)
+	go u.StartCommand(cmdId, cmdBackground, ch)
+	err = <-ch
 	if err != nil {
 		u.ApiResponseError(w, u.ApiMessage(uint32(constants.COMMAND_DETACHED_START_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.COMMAND_DETACHED_START_FAILURE)], cmdId),

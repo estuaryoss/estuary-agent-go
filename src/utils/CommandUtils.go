@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
 	"github.com/estuaryoss/estuary-agent-go/src/models"
+	"github.com/estuaryoss/estuary-agent-go/src/state"
 	"log"
 	"os/exec"
 	"runtime"
@@ -88,20 +89,14 @@ func RunCommandNoFile(command string, cmdId string) *models.CommandDetails {
 	return cd
 }
 
-func StartCommand(command string) *exec.Cmd {
-	cmd := getOsCommand(command)
-	cmd.Env = environment.GetInstance().GetEnvAndVirtualEnvArray()
+func StartCommand(cmdId string, command []string, ch chan error) {
+	cmd := getCommand(command)
+	state.GetInstance().AddCmdToCommandList(cmdId, cmd)
 
-	var stdOut, stdErr bytes.Buffer
-	cmd.Stdout = &stdOut
-	cmd.Stderr = &stdErr
-
-	cmd.Start()
-
-	return cmd
+	ch <- cmd.Start()
 }
 
-func GetCommand(command []string) *exec.Cmd {
+func getCommand(command []string) *exec.Cmd {
 	var args []string
 	cmd := exec.Command("", args...)
 
@@ -131,15 +126,6 @@ func GetCommandDetailsForEndedCommand(endedCommand *exec.Cmd) *models.CommandDet
 	cd.SetArgs(endedCommand.Args)
 
 	return cd
-}
-
-func StartCommands(commands []string) []*exec.Cmd {
-	var commandsStarted []*exec.Cmd
-	for _, cmd := range commands {
-		commandsStarted = append(commandsStarted, StartCommand(cmd))
-	}
-
-	return commandsStarted
 }
 
 func getOsCommand(command string) *exec.Cmd {
