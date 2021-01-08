@@ -15,7 +15,7 @@ func GetMessage() map[uint32]string {
 		uint32(constants.FOLDER_ZIP_FAILURE):                "Failed to zip folder %s.",
 		uint32(constants.EMPTY_REQUEST_BODY_PROVIDED):       "Empty request body provided.",
 		uint32(constants.UPLOAD_FILE_FAILURE):               "Failed to upload file.",
-		uint32(constants.HTTP_HEADER_NOT_PROVIDED):          "Http header value not provided, '%s'",
+		uint32(constants.HTTP_HEADER_NOT_PROVIDED):          "Http header value not provided: '%s'",
 		uint32(constants.COMMAND_EXEC_FAILURE):              "Starting command(s) failed",
 		uint32(constants.UNAUTHORIZED):                      "Unauthorized",
 		uint32(constants.SET_ENV_VAR_FAILURE):               "Failed to set env vars \"%s\"",

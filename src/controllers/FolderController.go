@@ -14,15 +14,22 @@ import (
 )
 
 var GetFolder = func(w http.ResponseWriter, r *http.Request) {
-	folderName := r.Header.Get("Folder-Path")
+	folderHeader := "Folder-Path"
+	folderName := r.Header.Get(folderHeader)
 	if folderName == "" {
 		u.ApiResponseError(w, u.ApiMessage(uint32(constants.HTTP_HEADER_NOT_PROVIDED),
-			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], folderName),
-			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], folderName),
+			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], folderHeader),
+			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], folderHeader),
 			r.URL.Path))
 		return
 	}
-
+	if !u.IsFolder(folderName) {
+		u.ApiResponseError(w, u.ApiMessage(uint32(constants.FOLDER_ZIP_FAILURE),
+			fmt.Sprintf(u.GetMessage()[uint32(constants.FOLDER_ZIP_FAILURE)], folderName),
+			fmt.Sprintf("Path %s is not a folder", folderName),
+			r.URL.Path))
+		return
+	}
 	zipFileName := "response.zip"
 	err := zipFolder(folderName, zipFileName)
 	if err != nil {

@@ -10,11 +10,12 @@ import (
 )
 
 var GetFile = func(w http.ResponseWriter, r *http.Request) {
-	fileName := r.Header.Get("File-Path")
+	fileHeaderName := "File-Path"
+	fileName := r.Header.Get(fileHeaderName)
 	if fileName == "" {
 		u.ApiResponseError(w, u.ApiMessage(uint32(constants.HTTP_HEADER_NOT_PROVIDED),
-			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], fileName),
-			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], fileName),
+			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], fileHeaderName),
+			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], fileHeaderName),
 			r.URL.Path))
 		return
 	}
@@ -34,11 +35,12 @@ var GetFile = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var PutFile = func(w http.ResponseWriter, r *http.Request) {
-	fileName := r.Header.Get("File-Path")
+	fileHeaderName := "File-Path"
+	fileName := r.Header.Get(fileHeaderName)
 	if fileName == "" {
 		u.ApiResponseError(w, u.ApiMessage(uint32(constants.HTTP_HEADER_NOT_PROVIDED),
-			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], fileName),
-			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], fileName),
+			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], fileHeaderName),
+			fmt.Sprintf(u.GetMessage()[uint32(constants.HTTP_HEADER_NOT_PROVIDED)], fileHeaderName),
 			r.URL.Path))
 		return
 	}

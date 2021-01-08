@@ -15,6 +15,13 @@ func DoesFileExists(filename string) bool {
 	}
 	return !info.IsDir()
 }
+func IsFolder(folderName string) bool {
+	info, err := os.Stat(folderName)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return info.IsDir()
+}
 
 func AppendFile(fileName string, content string) {
 	CreateFileIfNotExist(fileName)

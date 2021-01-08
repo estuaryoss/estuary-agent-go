@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 )
 
@@ -29,7 +30,7 @@ var SetupServer = func(appPort string) {
 	router.HandleFunc("/about", controllers.About).Methods("GET")
 	router.HandleFunc("/info", controllers.About).Methods("GET")
 	router.HandleFunc("/file", controllers.GetFile).Methods("GET")
-	router.HandleFunc("/file", controllers.PutFile).Methods("POST")
+	router.HandleFunc("/file", controllers.PutFile).Methods("POST", "PUT")
 	router.HandleFunc("/folder", controllers.GetFolder).Methods("GET")
 	router.HandleFunc("/command", controllers.CommandPost).Methods("POST")
 	router.HandleFunc("/commandyaml", controllers.CommandPostYaml).Methods("POST")
@@ -86,8 +87,10 @@ var TokenAuthentication = func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the Auth Token
 		tokenHeader := r.Header.Get("Token")
+		matchedUrl, _ := regexp.MatchString(`.*swaggerui.*`, r.URL.RequestURI())
 
-		if tokenHeader == environment.GetInstance().GetConfigEnvVars()[constants.HTTP_AUTH_TOKEN] {
+		//permit swagerui even though is not auth
+		if tokenHeader == environment.GetInstance().GetConfigEnvVars()[constants.HTTP_AUTH_TOKEN] || matchedUrl {
 			// Delegate request to the given handle
 			next.ServeHTTP(w, r)
 		} else {

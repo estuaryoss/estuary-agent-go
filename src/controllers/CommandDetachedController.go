@@ -100,9 +100,11 @@ var CommandDetachedPostYaml = func(w http.ResponseWriter, r *http.Request) {
 			r.URL.Path))
 		return
 	}
+	commandDescription := cmdId
+	models.SetDescription(yamlConfig, commandDescription)
 	resp := u.ApiMessage(uint32(constants.SUCCESS),
 		u.GetMessage()[uint32(constants.SUCCESS)],
-		cmdId,
+		models.GetDescription(),
 		r.URL.Path)
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
