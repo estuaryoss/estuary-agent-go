@@ -14,6 +14,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"runtime"
 	"strings"
 )
 
@@ -30,8 +31,14 @@ var CommandDetachedPost = func(w http.ResponseWriter, r *http.Request) {
 			r.URL.Path))
 		return
 	}
-	cmdBackground := []string{"runcmd",
-		"--cid=" + cmdId, "--args=" + strings.Join(commands, ";;"), "--enableStreams=true"}
+	var cmdBackground []string
+	if runtime.GOOS == "windows" {
+		cmdBackground = []string{"runcmd",
+			"--cid=" + cmdId, "--args=" + strings.Join(commands, ";;"), "--enableStreams=true"}
+	} else {
+		cmdBackground = []string{"./runcmd --cid=" + cmdId + " --args=\"" + strings.Join(commands, ";;") + "\"" +
+			" --enableStreams=true"}
+	}
 	log.Print(fmt.Sprintf("Starting command '%s' in background", strings.Join(cmdBackground, " ")))
 	cmd := u.GetCommand(cmdBackground)
 	err := cmd.Start()
@@ -88,8 +95,15 @@ var CommandDetachedPostYaml = func(w http.ResponseWriter, r *http.Request) {
 	envVars := yamlConfig.GetEnv()
 	environment.GetInstance().SetEnvVars(envVars)
 
-	cmdBackground := []string{"./runcmd",
-		"--cid=" + cmdId, "--args=" + strings.Join(configParser.GetCommandsList(yamlConfig), ";;"), "--enableStreams=true"}
+	var cmdBackground []string
+	if runtime.GOOS == "windows" {
+		cmdBackground = []string{"runcmd",
+			"--cid=" + cmdId, "--args=" + strings.Join(configParser.GetCommandsList(yamlConfig), ";;"), "--enableStreams=true"}
+	} else {
+		cmdBackground = []string{"./runcmd --cid=" + cmdId + " --args=\"" + strings.Join(configParser.GetCommandsList(yamlConfig), ";;") + "\"" +
+			" --enableStreams=true"}
+	}
+
 	log.Print(fmt.Sprintf("Starting command '%s' in background", strings.Join(cmdBackground, " ")))
 	cmd := u.GetCommand(cmdBackground)
 	err = cmd.Start()
