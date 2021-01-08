@@ -20,8 +20,7 @@ import (
 var SetupServer = func(appPort string) {
 	var router = mux.NewRouter()
 
-	router.Use(AddXRequestId)
-	router.Use(TokenAuthentication)
+	router.Use(AddXRequestId, LogHttpRequest, TokenAuthentication)
 
 	router.HandleFunc("/ping", controllers.Ping).Methods("GET")
 	router.HandleFunc("/env", controllers.GetEnvVars).Methods("GET")
@@ -65,11 +64,11 @@ var SetupServer = func(appPort string) {
 	}
 
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 	}
 }
 
-func AddXRequestId(next http.Handler) http.Handler {
+var AddXRequestId = func(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		uniqueId := uuid.New().String()
 		xRequestIdRequest := r.Header.Get(constants.X_REQUEST_ID)
@@ -79,6 +78,18 @@ func AddXRequestId(next http.Handler) http.Handler {
 			w.Header().Add(constants.X_REQUEST_ID, uniqueId)
 			r.Header.Add(constants.X_REQUEST_ID, uniqueId)
 		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+var LogHttpRequest = func(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		request := logging.NewMessageDumper().DumpRequest(r)
+		fluentdLogger := logging.GetInstance()
+		result, _ := json.Marshal(fluentdLogger.Emit(constants.NAME+"."+"api",
+			request, "DEBUG"))
+		log.Println(string(result))
+
 		next.ServeHTTP(w, r)
 	})
 }
@@ -104,10 +115,6 @@ var TokenAuthentication = func(next http.Handler) http.Handler {
 	})
 }
 
-func logHttpRequest(r *http.Request) {
-	request := logging.NewMessageDumper().DumpRequest(r)
-	fluentdLogger := logging.GetInstance()
-	result, _ := json.Marshal(fluentdLogger.Emit(constants.NAME+"."+"api",
-		request, "DEBUG"))
-	log.Print(string(result))
+var LogHttpResponse = func(w http.ResponseWriter, r *http.Request) {
+	json.NewEncoder(w).Encode(map[string]bool{"ok": true})
 }

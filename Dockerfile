@@ -1,5 +1,8 @@
 FROM golang:1.15-alpine3.12
 
+#!!! issues for command in background. Previous background commands seems to be killed
+#!!! only on alpine. OK on win and ubuntu
+
 ENV APP_DIR /app
 ENV PORT 8080
 #ENV HTTP_AUTH_TOKEN None

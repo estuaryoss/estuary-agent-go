@@ -2,8 +2,8 @@ package logging
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
 )
 
 const (
@@ -36,7 +36,7 @@ func (md *MessageDumper) GetHeaders() map[string]string {
 func (md *MessageDumper) DumpRequest(r *http.Request) map[string]interface{} {
 	message := make(map[string]interface{})
 	headers := md.getRequestHeaders(r)
-	body, _ := ioutil.ReadAll(r.Body)
+	body, _ := httputil.DumpRequest(r, true)
 	finalMessage := make(map[string]string)
 	finalMessage["message"] = string(body)
 	message[HEADERS] = headers
@@ -45,10 +45,11 @@ func (md *MessageDumper) DumpRequest(r *http.Request) map[string]interface{} {
 	return message
 }
 
-func (md *MessageDumper) DumpResponse(w http.ResponseWriter, body map[string]interface{}) map[interface{}]interface{} {
+func (md *MessageDumper) DumpResponse(resp *http.Response) map[interface{}]interface{} {
 	message := make(map[interface{}]interface{})
-	headers := md.getResponseHeaders(w)
-	responseBody := body
+	headers := md.getResponseHeaders(resp)
+	//JSON Marshall //TODO
+	responseBody := make(map[string]interface{})
 	finalMessage := make(map[string]interface{})
 
 	responseBody["description"] = fmt.Sprint(responseBody["description"])
@@ -60,12 +61,12 @@ func (md *MessageDumper) DumpResponse(w http.ResponseWriter, body map[string]int
 	return message
 }
 
-func (md *MessageDumper) DumpResponseString(w http.ResponseWriter, body string) map[interface{}]interface{} {
+func (md *MessageDumper) DumpResponseString(resp *http.Response) map[interface{}]interface{} {
 	message := make(map[interface{}]interface{})
-	headers := md.getResponseHeaders(w)
+	headers := md.getResponseHeaders(resp)
 	finalMessage := make(map[string]interface{})
 
-	finalMessage["message"] = fmt.Sprint(body)
+	finalMessage["message"] = fmt.Sprint(httputil.DumpResponse(resp, true))
 
 	message[HEADERS] = headers
 	message[BODY] = finalMessage
@@ -93,9 +94,9 @@ func (md *MessageDumper) getRequestHeaders(r *http.Request) map[string]string {
 	return headers
 }
 
-func (md *MessageDumper) getResponseHeaders(w http.ResponseWriter) map[string]string {
+func (md *MessageDumper) getResponseHeaders(resp *http.Response) map[string]string {
 	headers := make(map[string]string)
-	for name, values := range w.Header() {
+	for name, values := range resp.Header {
 		for _, value := range values {
 			headers[name] = value
 		}
