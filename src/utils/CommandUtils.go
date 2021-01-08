@@ -102,10 +102,18 @@ func StartCommand(command string) *exec.Cmd {
 }
 
 func GetCommand(command []string) *exec.Cmd {
-	cmdName := command[0]
-	cmdArgs := command[1:]
-	cmd := exec.Command(cmdName, cmdArgs...)
-	cmd.Env = environment.GetInstance().GetEnvAndVirtualEnvArray()
+	var args []string
+	cmd := exec.Command("", args...)
+
+	if runtime.GOOS == "windows" {
+		args = []string{"/c"}
+		args = append(args, command...)
+		cmd = exec.Command("cmd", args...)
+	} else {
+		args = []string{"-c"}
+		args = append(args, command...)
+		cmd = exec.Command("sh", args...)
+	}
 
 	return cmd
 }

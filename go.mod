@@ -4,7 +4,6 @@ go 1.13
 
 require (
 	github.com/ArthurHlt/go-eureka-client v1.1.0
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/denisenkom/go-mssqldb v0.9.0 // indirect
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/fluent/fluent-logger-golang v1.5.0

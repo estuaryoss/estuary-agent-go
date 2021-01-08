@@ -30,16 +30,17 @@ var CommandDetachedPost = func(w http.ResponseWriter, r *http.Request) {
 			r.URL.Path))
 		return
 	}
-	cmdBackground := []string{"./runcmd",
+	cmdBackground := []string{"runcmd",
 		"--cid=" + cmdId, "--args=" + strings.Join(commands, ";;"), "--enableStreams=true"}
 	log.Print(fmt.Sprintf("Starting command '%s' in background", strings.Join(cmdBackground, " ")))
 	cmd := u.GetCommand(cmdBackground)
 	err := cmd.Start()
+
 	state.GetInstance().AddCmdToCommandList(cmdId, cmd)
 	if err != nil {
 		u.ApiResponseError(w, u.ApiMessage(uint32(constants.COMMAND_DETACHED_START_FAILURE),
 			fmt.Sprintf(u.GetMessage()[uint32(constants.COMMAND_DETACHED_START_FAILURE)], cmdId),
-			err.Error(),
+			fmt.Sprint(cmd.Stderr),
 			r.URL.Path))
 		return
 	}
@@ -179,7 +180,7 @@ var CommandDetachedGet = func(w http.ResponseWriter, r *http.Request) {
 }
 
 var CommandDetachedDelete = func(w http.ResponseWriter, r *http.Request) {
-	u.KillAllProcesses()
+	u.KillAllCmdBackgroundProcesses()
 
 	resp := u.ApiMessage(uint32(constants.SUCCESS),
 		u.GetMessage()[uint32(constants.SUCCESS)],
@@ -199,7 +200,7 @@ var CommandDetachedDeleteById = func(w http.ResponseWriter, r *http.Request) {
 			r.URL.Path))
 		return
 	}
-	u.KillProcess(cmdId)
+	u.KillCmdBackgroundProcess(cmdId)
 
 	resp := u.ApiMessage(uint32(constants.SUCCESS),
 		u.GetMessage()[uint32(constants.SUCCESS)],
