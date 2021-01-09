@@ -1,11 +1,12 @@
 package environment
 
 import (
-	"github.com/estuaryoss/estuary-agent-go/src/constants"
-	"github.com/magiconair/properties"
 	"os"
 	"strings"
 	"sync"
+
+	"github.com/estuaryoss/estuary-agent-go/src/constants"
+	"github.com/magiconair/properties"
 )
 
 var once sync.Once
@@ -29,6 +30,7 @@ func GetInstance() *Env {
 				virtualEnvSize: 100,
 			}
 			singleton.SetEnvVars(GetVirtualEnvAsMapFromFile())
+			singleton.InitConfigEnvVars()
 		})
 	return singleton
 }

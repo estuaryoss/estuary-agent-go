@@ -3,6 +3,11 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"regexp"
+	"strconv"
+
 	"github.com/estuaryoss/estuary-agent-go/logging"
 	"github.com/estuaryoss/estuary-agent-go/services"
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
@@ -11,10 +16,6 @@ import (
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"log"
-	"net/http"
-	"regexp"
-	"strconv"
 )
 
 var SetupServer = func(appPort string) {
@@ -40,9 +41,6 @@ var SetupServer = func(appPort string) {
 	router.HandleFunc("/commanddetachedyaml/{cid}", controllers.CommandDetachedPostYaml).Methods("POST")
 	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedGetById).Methods("GET")
 	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedDeleteById).Methods("DELETE")
-
-	//init env
-	environment.GetInstance().InitConfigEnvVars()
 
 	//swagger
 	fs := http.FileServer(http.Dir("./swaggerui/"))
