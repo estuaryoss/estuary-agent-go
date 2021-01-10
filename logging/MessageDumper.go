@@ -1,7 +1,7 @@
 package logging
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"net/http/httputil"
 )
@@ -45,14 +45,13 @@ func (md *MessageDumper) DumpRequest(r *http.Request) map[string]interface{} {
 	return message
 }
 
-func (md *MessageDumper) DumpResponse(resp *http.Response) map[interface{}]interface{} {
-	message := make(map[interface{}]interface{})
-	headers := md.getResponseHeaders(resp)
-	//JSON Marshall //TODO
-	responseBody := make(map[string]interface{})
+func (md *MessageDumper) DumpResponse(w http.ResponseWriter, body map[string]interface{}) map[string]interface{} {
+	message := make(map[string]interface{})
+	headers := md.getResponseHeaders(w)
+	responseBody := body
 	finalMessage := make(map[string]interface{})
-
-	responseBody["description"] = fmt.Sprint(responseBody["description"])
+	descriptionString, _ := json.Marshal(responseBody["description"])
+	responseBody["description"] = string(descriptionString)
 	finalMessage = responseBody
 
 	message[HEADERS] = headers
@@ -61,12 +60,12 @@ func (md *MessageDumper) DumpResponse(resp *http.Response) map[interface{}]inter
 	return message
 }
 
-func (md *MessageDumper) DumpResponseString(resp *http.Response) map[interface{}]interface{} {
-	message := make(map[interface{}]interface{})
-	headers := md.getResponseHeaders(resp)
+func (md *MessageDumper) DumpResponseString(w http.ResponseWriter, body string) map[string]interface{} {
+	message := make(map[string]interface{})
+	headers := md.getResponseHeaders(w)
 	finalMessage := make(map[string]interface{})
 
-	finalMessage["message"] = fmt.Sprint(httputil.DumpResponse(resp, true))
+	finalMessage["message"] = body
 
 	message[HEADERS] = headers
 	message[BODY] = finalMessage
@@ -94,9 +93,9 @@ func (md *MessageDumper) getRequestHeaders(r *http.Request) map[string]string {
 	return headers
 }
 
-func (md *MessageDumper) getResponseHeaders(resp *http.Response) map[string]string {
+func (md *MessageDumper) getResponseHeaders(w http.ResponseWriter) map[string]string {
 	headers := make(map[string]string)
-	for name, values := range resp.Header {
+	for name, values := range w.Header() {
 		for _, value := range values {
 			headers[name] = value
 		}
