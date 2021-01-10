@@ -22,7 +22,6 @@ var SetupServer = func(appPort string) {
 	var router = mux.NewRouter()
 
 	router.Use(AddXRequestId, LogHttpRequest, TokenAuthentication)
-
 	router.HandleFunc("/ping", controllers.Ping).Methods("GET")
 	router.HandleFunc("/env", controllers.GetEnvVars).Methods("GET")
 	router.HandleFunc("/env", controllers.SetEnvVars).Methods("POST")
