@@ -1,10 +1,11 @@
 package utils
 
 import (
-	"github.com/estuaryoss/estuary-agent-go/src/state"
-	"github.com/mitchellh/go-ps"
 	"os"
 	"syscall"
+
+	"github.com/estuaryoss/estuary-agent-go/src/state"
+	"github.com/mitchellh/go-ps"
 )
 
 func KillCmdBackgroundProcess(cmdId string) {
@@ -40,7 +41,7 @@ func KillProcesses(processes []ps.Process) {
 
 func KillAllCmdBackgroundProcesses() {
 	bgCmdList := state.GetInstance().GetBackgroundCommandList()
-	for cmdId, _ := range bgCmdList {
+	for cmdId := range bgCmdList {
 		KillCmdBackgroundProcess(cmdId)
 		delete(bgCmdList, cmdId)
 	}

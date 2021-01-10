@@ -1,18 +1,23 @@
 package main
 
 import (
-	"github.com/estuaryoss/estuary-agent-go/src/routes"
+	"encoding/json"
 	"log"
-	"os"
+
+	"github.com/estuaryoss/estuary-agent-go/src/constants"
+	"github.com/estuaryoss/estuary-agent-go/src/environment"
+	"github.com/estuaryoss/estuary-agent-go/src/routes"
 )
 
 func main() {
-	var appPort = os.Getenv("PORT")
+	appPort := environment.GetInstance().GetConfigEnvVars()[constants.PORT]
 
-	if appPort == "" {
-		appPort = "8080"
-	}
-
-	log.Printf("Running on port %s\n", appPort)
+	log.Printf("Running on port: %s\n\n", appPort)
+	configEnvVars, _ := json.Marshal(environment.GetInstance().GetConfigEnvVars())
+	log.Printf("Config env vars: %s\n\n", configEnvVars)
+	systemEnvVars, _ := json.Marshal(environment.GetInstance().GetEnvAndVirtualEnv())
+	log.Printf("Environment: %s\n\n", systemEnvVars)
+	userEnvVars, _ := json.Marshal(environment.GetInstance().GetVirtualEnv())
+	log.Printf("User(virtual) Environment: %s\n\n", userEnvVars)
 	routes.SetupServer(appPort)
 }

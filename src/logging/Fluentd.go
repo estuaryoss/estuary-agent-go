@@ -25,7 +25,7 @@ type Fluentd struct {
 
 var singleton *Fluentd
 
-func GetInstance() *Fluentd {
+func GetFluentdInstance() *Fluentd {
 	once.Do(
 		func() {
 			singleton = &Fluentd{
@@ -51,7 +51,7 @@ func (f *Fluentd) enrichLog(levelCode string, msg interface{}) map[string]interf
 	return enrichedLog
 }
 
-func (f *Fluentd) Emit(tag string, msg map[string]interface{}, level string) interface{} {
+func (f *Fluentd) Emit(tag string, msg interface{}, level string) interface{} {
 	consoleMessage := make(map[string]interface{})
 	enrichedLog := f.enrichLog(level, msg)
 	emit := f.send(tag, enrichedLog)
@@ -62,7 +62,7 @@ func (f *Fluentd) Emit(tag string, msg map[string]interface{}, level string) int
 }
 
 func (f *Fluentd) send(tag string, msg map[string]interface{}) bool {
-	var err error = errors.New("Fluentd logging is not enabled")
+	var err = errors.New("Fluentd logging is not enabled")
 	if environment.GetInstance().GetConfigEnvVars()[constants.FLUENTD_IP_PORT] != "" {
 		err = f.logger.Post(tag, msg)
 	}

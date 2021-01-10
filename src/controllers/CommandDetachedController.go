@@ -4,6 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"runtime"
+	"strings"
+
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
 	"github.com/estuaryoss/estuary-agent-go/src/models"
@@ -11,11 +17,6 @@ import (
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
 	"github.com/gorilla/mux"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
-	"log"
-	"net/http"
-	"runtime"
-	"strings"
 )
 
 var CommandDetachedPost = func(w http.ResponseWriter, r *http.Request) {
@@ -144,7 +145,7 @@ var CommandDetachedGetById = func(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	commands := cd.GetCommands()
-	for cmd, _ := range commands {
+	for cmd := range commands {
 		cmdDetails := commands[cmd].GetCommandDetails()
 		cmdDetails.SetOut(string(u.ReadFile(u.GetBase64HashForTheCommand(cmd, cmdId, ".out"))))
 		cmdDetails.SetErr(string(u.ReadFile(u.GetBase64HashForTheCommand(cmd, cmdId, ".err"))))
@@ -180,7 +181,7 @@ var CommandDetachedGet = func(w http.ResponseWriter, r *http.Request) {
 	}
 	commands := cd.GetCommands()
 	cmdId := cd.GetId()
-	for cmd, _ := range commands {
+	for cmd := range commands {
 		cmdDetails := commands[cmd].GetCommandDetails()
 		cmdDetails.SetOut(string(u.ReadFile(u.GetBase64HashForTheCommand(cmd, cmdId, ".out"))))
 		cmdDetails.SetErr(string(u.ReadFile(u.GetBase64HashForTheCommand(cmd, cmdId, ".err"))))
