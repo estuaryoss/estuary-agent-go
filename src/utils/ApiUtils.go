@@ -52,5 +52,5 @@ func ApiResponseByteArray(w http.ResponseWriter, data []byte) {
 func ApiResponseZip(w http.ResponseWriter, data []byte) {
 	w.Header().Add("Content-Type", "application/zip")
 	io.Writer.Write(w, data)
-	ServerHttpResponse = &HttpResponse{Response: string(data), Code: http.StatusOK}
+	ServerHttpResponse = &HttpResponse{Response: "skipped (zip archive content)", Code: http.StatusOK}
 }

@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"encoding/json"
-	"github.com/estuaryoss/estuary-agent-go/logging"
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
+	"github.com/estuaryoss/estuary-agent-go/src/logging"
 	u "github.com/estuaryoss/estuary-agent-go/src/utils"
 	"github.com/google/uuid"
 	"log"
@@ -59,16 +59,16 @@ var TokenAuthenticationHandler = func(next http.Handler) http.Handler {
 			u.ApiResponseError(w, resp)
 		}
 
-		LogHttpResponse(w, u.ServerHttpResponse)
+		LogHttpResponse(w)
 	})
 }
 
-func LogHttpResponse(w http.ResponseWriter, httpRsp *u.HttpResponse) {
+func LogHttpResponse(w http.ResponseWriter) {
 	var response interface{}
-	if typeof(httpRsp.Response) == "map" {
-		response = logging.NewMessageDumper().DumpResponse(w, httpRsp.Response.(map[string]interface{}))
+	if typeof(u.ServerHttpResponse.Response) == "map" {
+		response = logging.NewMessageDumper().DumpResponse(w, u.ServerHttpResponse.Response.(map[string]interface{}))
 	} else {
-		response = logging.NewMessageDumper().DumpResponseString(w, httpRsp.Response.(string))
+		response = logging.NewMessageDumper().DumpResponseString(w, u.ServerHttpResponse.Response.(string))
 	}
 
 	fluentdLogger := logging.GetFluentdInstance()

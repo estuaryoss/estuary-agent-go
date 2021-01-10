@@ -2,14 +2,14 @@ package routes
 
 import (
 	"fmt"
-	h "github.com/estuaryoss/estuary-agent-go/handlers"
+	h "github.com/estuaryoss/estuary-agent-go/src/handlers"
 	"net/http"
 	"strconv"
 
-	"github.com/estuaryoss/estuary-agent-go/services"
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/estuaryoss/estuary-agent-go/src/controllers"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
+	"github.com/estuaryoss/estuary-agent-go/src/services"
 	"github.com/gorilla/mux"
 )
 
