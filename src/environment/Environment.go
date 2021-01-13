@@ -27,7 +27,7 @@ func GetInstance() *Env {
 				configEnvVars:  map[string]string{},
 				env:            GetEnvAsMap(),
 				virtualEnv:     map[string]string{},
-				virtualEnvSize: 100,
+				virtualEnvSize: 500,
 			}
 			singleton.SetEnvVars(GetVirtualEnvAsMapFromFile())
 			singleton.InitConfigEnvVars()
