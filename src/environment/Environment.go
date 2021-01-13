@@ -101,6 +101,12 @@ func (env *Env) GetEnvAndVirtualEnv() map[string]string {
 	return mergeMaps(env.env, env.virtualEnv)
 }
 
+func (env *Env) CleanVirtualEnv() {
+	for envVarName := range env.virtualEnv {
+		delete(env.virtualEnv, envVarName)
+	}
+}
+
 func (env *Env) SetEnvVar(key string, value string) bool {
 	if _, ok := env.env[key]; ok {
 		return false

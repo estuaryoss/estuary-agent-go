@@ -2,9 +2,10 @@ package routes
 
 import (
 	"fmt"
-	h "github.com/estuaryoss/estuary-agent-go/src/handlers"
 	"net/http"
 	"strconv"
+
+	h "github.com/estuaryoss/estuary-agent-go/src/handlers"
 
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/estuaryoss/estuary-agent-go/src/controllers"
@@ -21,6 +22,7 @@ var SetupServer = func(appPort string) {
 	router.HandleFunc("/ping", controllers.Ping).Methods("GET")
 	router.HandleFunc("/env", controllers.GetEnvVars).Methods("GET")
 	router.HandleFunc("/env", controllers.SetEnvVars).Methods("POST")
+	router.HandleFunc("/env", controllers.DeleteVirtualEnvVars).Methods("DELETE")
 	router.HandleFunc("/env/{name}", controllers.GetEnvVar).Methods("GET")
 	router.HandleFunc("/about", controllers.About).Methods("GET")
 	router.HandleFunc("/info", controllers.About).Methods("GET")
