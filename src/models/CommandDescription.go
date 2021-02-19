@@ -9,6 +9,7 @@ type CommandDescription struct {
 	Pid        int                       `json:"pid"`
 	Id         string                    `json:"id"`
 	Commands   map[string]*CommandStatus `json:"commands"`
+	Processes  []ProcessInfo             `json:"processes"`
 }
 
 func NewCommandDescription() *CommandDescription {

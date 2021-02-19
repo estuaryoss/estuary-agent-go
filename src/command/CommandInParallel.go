@@ -17,7 +17,8 @@ func NewCommandInParallel() *CommandInParallel {
 	initAtString := utils.GetFormattedTimeAsString(initAt)
 	commandInParallel := &CommandInParallel{
 		commandDescription: &models.CommandDescription{false, false, initAtString,
-			initAtString, 0, 0, "none", map[string]*models.CommandStatus{}},
+			initAtString, 0, 0, "none", map[string]*models.CommandStatus{},
+			[]models.ProcessInfo{}},
 		commandsMap: map[string]*models.CommandStatus{},
 	}
 	return commandInParallel

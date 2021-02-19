@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"github.com/estuaryoss/estuary-agent-go/src/models"
 	"os"
+	"strings"
 	"syscall"
 
 	"github.com/estuaryoss/estuary-agent-go/src/state"
@@ -16,6 +18,36 @@ func KillCmdBackgroundProcess(cmdId string) {
 		bgCmdList[cmdId].Process.Signal(syscall.SIGTERM)
 		delete(bgCmdList, cmdId)
 	}
+}
+
+func GetAllProcesses() []*models.ProcessInfo {
+	var processList = []*models.ProcessInfo{}
+	ps, _ := ps.Processes()
+	for _, process := range ps {
+		pInfo := &models.ProcessInfo{}
+		pInfo.Pid = process.Pid()
+		pInfo.PPid = process.PPid()
+		pInfo.Name = process.Executable()
+		processList = append(processList, pInfo)
+	}
+
+	return processList
+}
+
+func GetAllProcessesByExecName(processName string) []*models.ProcessInfo {
+	var processList = []*models.ProcessInfo{}
+	ps, _ := ps.Processes()
+	for _, process := range ps {
+		if strings.Contains(process.Executable(), processName) {
+			pInfo := &models.ProcessInfo{}
+			pInfo.Pid = process.Pid()
+			pInfo.PPid = process.PPid()
+			pInfo.Name = process.Executable()
+			processList = append(processList, pInfo)
+		}
+	}
+
+	return processList
 }
 
 func GetChildListForParentProcess(PPid int) []ps.Process {

@@ -23,7 +23,7 @@ func NewCommand(cmdId string, outputJsonPath string, enableStreams bool) *Comman
 		outputJsonPath: outputJsonPath,
 		enableStreams:  enableStreams,
 		commandDescription: &models.CommandDescription{false, false, initAtString,
-			initAtString, 0, 0, "none", map[string]*models.CommandStatus{}},
+			initAtString, 0, 0, "none", map[string]*models.CommandStatus{}, []models.ProcessInfo{}},
 		commandsMap: map[string]*models.CommandStatus{},
 	}
 	return command
