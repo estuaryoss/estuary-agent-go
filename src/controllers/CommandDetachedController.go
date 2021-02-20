@@ -145,11 +145,16 @@ var CommandDetachedGetById = func(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	commands := cd.GetCommands()
+	processId := cd.GetPid()
 	for cmd := range commands {
 		cmdDetails := commands[cmd].GetCommandDetails()
 		cmdDetails.SetOut(string(u.ReadFile(u.GetBase64HashForTheCommand(cmd, cmdId, ".out"))))
 		cmdDetails.SetErr(string(u.ReadFile(u.GetBase64HashForTheCommand(cmd, cmdId, ".err"))))
 	}
+
+	var processes = u.GetChildListForParentProcess(processId)
+	processes = append(processes, u.GetProcessByPid(processId)...)
+	cd.SetProcesses(processes)
 
 	resp := u.ApiMessage(uint32(constants.SUCCESS),
 		u.GetMessage()[uint32(constants.SUCCESS)],
@@ -181,11 +186,16 @@ var CommandDetachedGet = func(w http.ResponseWriter, r *http.Request) {
 	}
 	commands := cd.GetCommands()
 	cmdId := cd.GetId()
+	processId := cd.GetPid()
+
 	for cmd := range commands {
 		cmdDetails := commands[cmd].GetCommandDetails()
 		cmdDetails.SetOut(string(u.ReadFile(u.GetBase64HashForTheCommand(cmd, cmdId, ".out"))))
 		cmdDetails.SetErr(string(u.ReadFile(u.GetBase64HashForTheCommand(cmd, cmdId, ".err"))))
 	}
+	var processes = u.GetChildListForParentProcess(processId)
+	processes = append(processes, u.GetProcessByPid(processId)...)
+	cd.SetProcesses(processes)
 
 	resp := u.ApiMessage(uint32(constants.SUCCESS),
 		u.GetMessage()[uint32(constants.SUCCESS)],

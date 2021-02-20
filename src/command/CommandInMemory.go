@@ -17,7 +17,8 @@ func NewCommandInMemory() *CommandInMemory {
 	initAtString := utils.GetFormattedTimeAsString(initAt)
 	commandInMemory := &CommandInMemory{
 		commandDescription: &models.CommandDescription{false, false, initAtString,
-			initAtString, 0, 0, "none", map[string]*models.CommandStatus{}, []models.ProcessInfo{}},
+			initAtString, 0, 0, "none", map[string]*models.CommandStatus{},
+			[]*models.ProcessInfo{}},
 		commandsMap: map[string]*models.CommandStatus{},
 	}
 	return commandInMemory

@@ -50,24 +50,48 @@ func GetAllProcessesByExecName(processName string) []*models.ProcessInfo {
 	return processList
 }
 
-func GetChildListForParentProcess(PPid int) []ps.Process {
-	var childProcessList = []ps.Process{}
+func GetChildListForParentProcess(PPid int) []*models.ProcessInfo {
+	var childProcessList = []*models.ProcessInfo{}
 	ps, _ := ps.Processes()
 	for _, process := range ps {
 		if process.PPid() == PPid {
-			childProcessList = append(childProcessList, process)
+			pInfo := &models.ProcessInfo{}
+			pInfo.Pid = process.Pid()
+			pInfo.PPid = process.PPid()
+			pInfo.Name = process.Executable()
+			childProcessList = append(childProcessList, pInfo)
 		}
 	}
 
 	return childProcessList
 }
 
-func KillProcesses(processes []ps.Process) {
-	for _, process := range processes {
-		p, err := os.FindProcess(process.Pid())
-		if err == nil {
-			p.Signal(syscall.SIGTERM)
+func GetProcessByPid(pid int) []*models.ProcessInfo {
+	var proc []*models.ProcessInfo
+	ps, _ := ps.Processes()
+	for _, process := range ps {
+		if process.Pid() == pid {
+			pInfo := &models.ProcessInfo{}
+			pInfo.Pid = process.Pid()
+			pInfo.PPid = process.PPid()
+			pInfo.Name = process.Executable()
+			proc = append(proc, pInfo)
 		}
+	}
+
+	return proc
+}
+
+func KillProcesses(processes []*models.ProcessInfo) {
+	for _, process := range processes {
+		KillProcess(process.GetPid())
+	}
+}
+
+func KillProcess(pid int) {
+	p, err := os.FindProcess(pid)
+	if err == nil {
+		p.Signal(syscall.SIGTERM)
 	}
 }
 

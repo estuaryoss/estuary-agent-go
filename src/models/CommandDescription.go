@@ -9,7 +9,7 @@ type CommandDescription struct {
 	Pid        int                       `json:"pid"`
 	Id         string                    `json:"id"`
 	Commands   map[string]*CommandStatus `json:"commands"`
-	Processes  []ProcessInfo             `json:"processes"`
+	Processes  []*ProcessInfo            `json:"processes"`
 }
 
 func NewCommandDescription() *CommandDescription {
@@ -79,4 +79,12 @@ func (cd *CommandDescription) GetCommands() map[string]*CommandStatus {
 
 func (cd *CommandDescription) SetCommands(commands map[string]*CommandStatus) {
 	cd.Commands = commands
+}
+
+func (cd *CommandDescription) GetProcesses() []*ProcessInfo {
+	return cd.Processes
+}
+
+func (cd *CommandDescription) SetProcesses(processes []*ProcessInfo) {
+	cd.Processes = processes
 }

@@ -18,7 +18,7 @@ func NewCommandInParallel() *CommandInParallel {
 	commandInParallel := &CommandInParallel{
 		commandDescription: &models.CommandDescription{false, false, initAtString,
 			initAtString, 0, 0, "none", map[string]*models.CommandStatus{},
-			[]models.ProcessInfo{}},
+			[]*models.ProcessInfo{}},
 		commandsMap: map[string]*models.CommandStatus{},
 	}
 	return commandInParallel
