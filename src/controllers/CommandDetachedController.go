@@ -152,8 +152,7 @@ var CommandDetachedGetById = func(w http.ResponseWriter, r *http.Request) {
 		cmdDetails.SetErr(string(u.ReadFile(u.GetBase64HashForTheCommand(cmd, cmdId, ".err"))))
 	}
 
-	var processes = u.GetChildListForParentProcess(processId)
-	processes = append(processes, u.GetProcessByPid(processId)...)
+	var processes = u.GetProcessesForPid(processId)
 	cd.SetProcesses(processes)
 
 	resp := u.ApiMessage(uint32(constants.SUCCESS),
@@ -193,8 +192,7 @@ var CommandDetachedGet = func(w http.ResponseWriter, r *http.Request) {
 		cmdDetails.SetOut(string(u.ReadFile(u.GetBase64HashForTheCommand(cmd, cmdId, ".out"))))
 		cmdDetails.SetErr(string(u.ReadFile(u.GetBase64HashForTheCommand(cmd, cmdId, ".err"))))
 	}
-	var processes = u.GetChildListForParentProcess(processId)
-	processes = append(processes, u.GetProcessByPid(processId)...)
+	var processes = u.GetProcessesForPid(processId)
 	cd.SetProcesses(processes)
 
 	resp := u.ApiMessage(uint32(constants.SUCCESS),

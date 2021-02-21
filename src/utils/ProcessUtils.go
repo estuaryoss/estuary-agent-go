@@ -2,6 +2,7 @@ package utils
 
 import (
 	"github.com/estuaryoss/estuary-agent-go/src/models"
+	"log"
 	"os"
 	"strings"
 	"syscall"
@@ -13,8 +14,9 @@ import (
 func KillCmdBackgroundProcess(cmdId string) {
 	bgCmdList := state.GetInstance().GetBackgroundCommandList()
 	if bgCmdList[cmdId] != nil {
-		childProcesses := GetChildListForParentProcess(bgCmdList[cmdId].Process.Pid)
-		KillProcesses(childProcesses)
+		processesForPid := GetProcessesForPid(bgCmdList[cmdId].Process.Pid)
+		log.Printf("Killing processes: %s for pid: %d", processesForPid, bgCmdList[cmdId].Process.Pid)
+		KillProcesses(processesForPid) // <- kill processes
 		bgCmdList[cmdId].Process.Signal(syscall.SIGTERM)
 		delete(bgCmdList, cmdId)
 	}
@@ -50,20 +52,41 @@ func GetAllProcessesByExecName(processName string) []*models.ProcessInfo {
 	return processList
 }
 
-func GetChildListForParentProcess(PPid int) []*models.ProcessInfo {
-	var childProcessList = []*models.ProcessInfo{}
+func GetProcessesForPid(pid int) []*models.ProcessInfo {
+	var processList = []*models.ProcessInfo{}
+	var currentProcess ps.Process
+	pInfoCurrent := &models.ProcessInfo{}
 	ps, _ := ps.Processes()
+
 	for _, process := range ps {
-		if process.PPid() == PPid {
-			pInfo := &models.ProcessInfo{}
-			pInfo.Pid = process.Pid()
-			pInfo.PPid = process.PPid()
-			pInfo.Name = process.Executable()
-			childProcessList = append(childProcessList, pInfo)
+		if process.Pid() == pid {
+			pInfoCurrent.Pid = process.Pid()
+			pInfoCurrent.PPid = process.PPid()
+			pInfoCurrent.Name = process.Executable()
+			currentProcess = process
+			break
 		}
 	}
 
-	return childProcessList
+	for _, process := range ps {
+		if currentProcess != nil {
+			if process.PPid() == currentProcess.Pid() {
+				pInfo := &models.ProcessInfo{}
+				pInfo.Pid = process.Pid()
+				pInfo.PPid = process.PPid()
+				pInfo.Name = process.Executable()
+				processList = append(processList, pInfo)
+			}
+		}
+	}
+
+	log.Printf("Discovered child processes: %s", processList)
+	if pInfoCurrent.Pid != 0 {
+		processList = append(processList, pInfoCurrent)
+	}
+
+	log.Printf("Discovered process list: %s, for pid: %d", processList, pid)
+	return processList
 }
 
 func GetProcessByPid(pid int) []*models.ProcessInfo {
@@ -91,6 +114,7 @@ func KillProcesses(processes []*models.ProcessInfo) {
 func KillProcess(pid int) {
 	p, err := os.FindProcess(pid)
 	if err == nil {
+		log.Printf("Killing process %d", pid)
 		p.Signal(syscall.SIGTERM)
 	}
 }
