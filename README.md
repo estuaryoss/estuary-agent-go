@@ -7,6 +7,11 @@ The agent is written in Go, and it executes low-level commands.
 https://github.com/estuaryoss/estuary-agent/tree/estuary-agent-go (branch estuary-agent-go)    
 Folders: **tests/rest_win** & **tests/rest**
 
+## Known issues
+
+Previous background commands seems to be killed.  
+Only on alpine. OK on win and ubuntu
+
 References
 
 1. https://www.tutorialspoint.com/go/
