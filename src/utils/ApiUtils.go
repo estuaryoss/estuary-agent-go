@@ -13,7 +13,7 @@ type HttpResponse struct {
 	Code     int
 }
 
-var ServerHttpResponse *HttpResponse = &HttpResponse{}
+var ServerHttpResponse = &HttpResponse{}
 
 func ApiMessage(code uint32, message string, description interface{}, path string) map[string]interface{} {
 	t := time.Now()

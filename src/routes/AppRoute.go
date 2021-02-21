@@ -38,6 +38,8 @@ var SetupServer = func(appPort string) {
 	router.HandleFunc("/commanddetachedyaml/{cid}", controllers.CommandDetachedPostYaml).Methods("POST")
 	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedGetById).Methods("GET")
 	router.HandleFunc("/commanddetached/{cid}", controllers.CommandDetachedDeleteById).Methods("DELETE")
+	router.HandleFunc("/processes", controllers.GetProcesses).Methods("GET")
+	router.HandleFunc("/processes/{name}", controllers.GetProcessesByExecName).Methods("GET")
 
 	//swagger ui
 	fs := http.FileServer(http.Dir("./swaggerui/"))
