@@ -63,7 +63,7 @@ func (f *Fluentd) Emit(tag string, msg interface{}, level string) interface{} {
 
 func (f *Fluentd) send(tag string, msg map[string]interface{}) bool {
 	var err = errors.New("Fluentd logging is not enabled")
-	if environment.GetInstance().GetConfigEnvVars()[constants.FLUENTD_IP_PORT] != "" {
+	if f.logger != nil {
 		err = f.logger.Post(tag, msg)
 	}
 	if err == nil {
@@ -86,9 +86,9 @@ func getFluentdLogger() *fluent.Fluent {
 		if err != nil {
 			log.Printf(fmt.Sprintf("Unable to create logger for host: %s and port: %d",
 				fluent.Config.FluentHost, fluent.Config.FluentPort))
-
-			return fluent
 		}
+
+		return fluent
 	}
 
 	return nil
