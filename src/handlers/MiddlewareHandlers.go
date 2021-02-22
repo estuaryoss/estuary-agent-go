@@ -46,7 +46,7 @@ var TokenAuthenticationHandler = func(next http.Handler) http.Handler {
 		matchedUrl, _ := regexp.MatchString(`.*swaggerui.*`, r.URL.RequestURI())
 
 		//permit swagger ui even though is not auth
-		if tokenHeader == environment.GetInstance().GetConfigEnvVars()[constants.HTTP_AUTH_TOKEN] || matchedUrl {
+		if (tokenHeader == environment.GetInstance().GetConfigEnvVars()[constants.HTTP_AUTH_TOKEN]) || matchedUrl {
 			// Delegate request to the given handle
 			next.ServeHTTP(w, r)
 		} else {

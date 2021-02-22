@@ -17,8 +17,17 @@ const (
 func About() map[string]interface{} {
 	virtualMemory, _ := mem.VirtualMemory()
 	plat, fam, ver, _ := host.PlatformInformation()
-	hostname, _ := os.Hostname()
-	cpuInfo, _ := cpu.Info()
+	var hostnameInfo = "NA"
+	var cpuInfo = "NA"
+	hostname, err := os.Hostname()
+	if err != nil {
+		hostnameInfo = hostname
+	}
+	cpu_, err := cpu.Info()
+	if err != nil {
+		cpuInfo = cpu_[0].ModelName
+	}
+
 	return map[string]interface{}{
 		"system":       runtime.GOOS,
 		"platform":     plat,
@@ -27,8 +36,8 @@ func About() map[string]interface{} {
 		"architecture": runtime.GOARCH,
 		"machine":      "NA",
 		"layer":        getLayer(),
-		"hostname":     hostname,
-		"cpu":          cpuInfo[0].ModelName,
+		"hostname":     hostnameInfo,
+		"cpu":          cpuInfo,
 		"ram":          fmt.Sprint(virtualMemory.Total/(1024*1024*1024), " GB"),
 		"golang":       runtime.Version(),
 	}

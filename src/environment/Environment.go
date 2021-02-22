@@ -72,6 +72,12 @@ func (env *Env) InitConfigEnvVars() map[string]string {
 	if env.GetEnv()[constants.HTTPS_KEY] != "" {
 		enableHttps = env.GetEnv()[constants.HTTPS_KEY]
 	}
+
+	httpAuthToken := ""
+	if env.GetEnv()[constants.HTTP_AUTH_TOKEN] != "" {
+		httpAuthToken = env.GetEnv()[constants.HTTP_AUTH_TOKEN]
+	}
+
 	initEnvVars[constants.FLUENTD_IP_PORT] = fluentdIpPort
 	initEnvVars[constants.PORT] = port
 	initEnvVars[constants.EUREKA_SERVER] = eurekaServer
@@ -79,6 +85,7 @@ func (env *Env) InitConfigEnvVars() map[string]string {
 	initEnvVars[constants.HTTPS_ENABLE] = enableHttps
 	initEnvVars[constants.HTTPS_CERT] = httpsCert
 	initEnvVars[constants.HTTPS_KEY] = httpsKey
+	initEnvVars[constants.HTTP_AUTH_TOKEN] = httpAuthToken
 
 	env.configEnvVars = initEnvVars
 
