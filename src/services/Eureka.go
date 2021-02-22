@@ -25,13 +25,22 @@ func (e *Eureka) RegisterApp(appIpPort string) {
 	appIpPortArray := strings.Split(appIpPort, ":")
 	appIp := appIpPortArray[0]
 	appPort, _ := strconv.Atoi(appIpPortArray[1])
-	instance := eureka.NewInstanceInfo(appIp, constants.NAME,
-		appIp, appPort, 30, false) //Create a new instance to register
+	isSsl, _ := strconv.ParseBool(environment.GetInstance().GetConfigEnvVars()[constants.HTTPS_ENABLE])
+	instanceInfo := eureka.NewInstanceInfo(appIp, constants.NAME,
+		appIp, appPort, 30, isSsl) //Create a new instanceInfo to register
 
-	instance.Metadata = &eureka.MetaData{
+	instanceInfo.Metadata = &eureka.MetaData{
 		Map: make(map[string]string),
 	}
-	err := e.client.RegisterInstance(constants.NAME, instance)
+	var protocol = "http"
+	if isSsl {
+		protocol = "https"
+	}
+	instanceInfo.HomePageUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/"
+	instanceInfo.HealthCheckUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/ping"
+	instanceInfo.StatusPageUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/ping"
+
+	err := e.client.RegisterInstance(constants.NAME, instanceInfo)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Unable to register to EurekaServer: %s with ip: %s and port: %d",
 			fmt.Sprint(e.client.GetCluster()), appIp, appPort))

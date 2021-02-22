@@ -50,8 +50,8 @@ var SetupServer = func(appPort string) {
 	ec.RegisterApp(environment.GetInstance().GetConfigEnvVars()[constants.APP_IP_PORT])
 
 	var err error
-	isHttps, _ := strconv.ParseBool(environment.GetInstance().GetConfigEnvVars()[constants.HTTPS_ENABLE])
-	if isHttps == true {
+	isSsl, _ := strconv.ParseBool(environment.GetInstance().GetConfigEnvVars()[constants.HTTPS_ENABLE])
+	if isSsl == true {
 		err = http.ListenAndServeTLS(":"+environment.GetInstance().GetConfigEnvVars()[constants.PORT],
 			environment.GetInstance().GetConfigEnvVars()[constants.HTTPS_CERT],
 			environment.GetInstance().GetConfigEnvVars()[constants.HTTPS_KEY],

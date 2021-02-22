@@ -9,7 +9,7 @@ services:
 
   estuary-discovery:
     hostname: estuary-discovery
-    image: dinutac/estuary-discovery:latest
+    image: dinutac/estuary-discovery:4.2.0
     command: bash -c "sleep 25 && /scripts/main_flask.py"
     environment:
       FLUENTD_IP_PORT: fluentd:24224
