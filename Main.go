@@ -2,11 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"log"
-
 	"github.com/estuaryoss/estuary-agent-go/src/constants"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
 	"github.com/estuaryoss/estuary-agent-go/src/routes"
+	"log"
 )
 
 func main() {
