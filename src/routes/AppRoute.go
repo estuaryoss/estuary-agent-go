@@ -11,6 +11,7 @@ import (
 	"github.com/estuaryoss/estuary-agent-go/src/controllers"
 	"github.com/estuaryoss/estuary-agent-go/src/environment"
 	"github.com/estuaryoss/estuary-agent-go/src/services"
+	u "github.com/estuaryoss/estuary-agent-go/src/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -48,6 +49,10 @@ var SetupServer = func(appPort string) {
 	//eureka registration
 	ec := services.NewEurekaClient()
 	ec.RegisterApp(environment.GetInstance().GetConfigEnvVars()[constants.APP_IP_PORT])
+
+	//folder creation
+	u.CreateDir(constants.CMD_BACKGROUND_DIR)
+	u.CreateDir(constants.CMD_BACKGROUND_STREAMS_DIR)
 
 	var err error
 	isSsl, _ := strconv.ParseBool(environment.GetInstance().GetConfigEnvVars()[constants.HTTPS_ENABLE])

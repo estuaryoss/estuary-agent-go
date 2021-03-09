@@ -18,5 +18,6 @@ func main() {
 	log.Printf("Environment: %s\n\n", systemEnvVars)
 	userEnvVars, _ := json.Marshal(environment.GetInstance().GetVirtualEnv())
 	log.Printf("User(virtual) Environment: %s\n\n", userEnvVars)
+
 	routes.SetupServer(appPort)
 }
