@@ -17,14 +17,14 @@ const (
 func About() map[string]interface{} {
 	virtualMemory, _ := mem.VirtualMemory()
 	plat, fam, ver, _ := host.PlatformInformation()
-	var hostnameInfo = "NA"
 	var cpuInfo = "NA"
-	hostname, err := os.Hostname()
-	if err != nil {
-		hostnameInfo = hostname
+	var hostNameInfo = "NA"
+	hostName, err := os.Hostname()
+	if err == nil {
+		hostNameInfo = hostName
 	}
 	cpu_, err := cpu.Info()
-	if err != nil {
+	if err == nil {
 		cpuInfo = cpu_[0].ModelName
 	}
 
@@ -36,7 +36,7 @@ func About() map[string]interface{} {
 		"architecture": runtime.GOARCH,
 		"machine":      "NA",
 		"layer":        getLayer(),
-		"hostname":     hostnameInfo,
+		"hostname":     hostNameInfo,
 		"cpu":          cpuInfo,
 		"ram":          fmt.Sprint(virtualMemory.Total/(1024*1024*1024), " GB"),
 		"golang":       runtime.Version(),
