@@ -43,6 +43,9 @@ func (e *Eureka) RegisterApp(appIpPort string) {
 	if isSsl {
 		protocol = "https"
 	}
+
+	instanceInfo.Metadata.Map["management.port"] = strconv.Itoa(appPort)
+	instanceInfo.InstanceID = hostName + ":" + constants.NAME + ":" + strconv.Itoa(appPort)
 	instanceInfo.HomePageUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/"
 	instanceInfo.HealthCheckUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/ping"
 	instanceInfo.StatusPageUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/ping"
