@@ -11,9 +11,10 @@ ENV PORT 8080
 RUN mkdir $APP_DIR
 WORKDIR $APP_DIR
 
-COPY ./ $APP_DIR
+COPY estuary-agent-go $APP_DIR
 ADD https://estuary-agent-go.s3.eu-central-1.amazonaws.com/4.1.0/runcmd-linux $APP_DIR/runcmd
 
+RUN chmod +x estuary-agent-go
 RUN chmod +x runcmd
 
-CMD ["go", "run", "Main.go"]
+CMD ["./estuary-agent-go"]
