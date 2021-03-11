@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Eureka struct {
@@ -55,6 +56,8 @@ func (e *Eureka) RegisterApp(appIpPort string) {
 		log.Fatal(fmt.Sprintf("Unable to register to EurekaServer: %s with ip: %s and port: %d",
 			fmt.Sprint(e.client.GetCluster()), appIp, appPort))
 	}
+
+	go sendHeartbeat(e.client, instanceInfo, 30)
 }
 
 func GetEurekaClient() *eureka.Client {
@@ -66,4 +69,16 @@ func GetEurekaClient() *eureka.Client {
 	}
 
 	return nil
+}
+
+func sendHeartbeat(client *eureka.Client, instanceInfo *eureka.InstanceInfo, second int) {
+	d := (time.Duration(second) * time.Second)
+	tick := time.Tick(d)
+	for {
+		select {
+		case <-tick:
+			log.Printf("Sending eureka heartbeat >  [App: '%s', InstanceId: '%s']", instanceInfo.App, instanceInfo.InstanceID)
+			client.SendHeartbeat(instanceInfo.App, instanceInfo.InstanceID)
+		}
+	}
 }
