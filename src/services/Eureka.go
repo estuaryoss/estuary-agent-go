@@ -49,7 +49,7 @@ func (e *Eureka) RegisterApp(appIpPort string) {
 
 	instanceInfo.Metadata.Map["management.port"] = strconv.Itoa(appPort)
 	instanceInfo.InstanceID = hostName + ":" + constants.NAME + ":" + strconv.Itoa(appPort)
-	instanceInfo.HomePageUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/"
+	instanceInfo.HomePageUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/" + preUrl
 	instanceInfo.HealthCheckUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/" + preUrl + "/ping"
 	instanceInfo.StatusPageUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/" + preUrl + "/ping"
 
