@@ -27,8 +27,10 @@ func (e *Eureka) RegisterApp(appIpPort string) {
 	appIpPortArray := strings.Split(appIpPort, ":")
 	appIp := appIpPortArray[0]
 	appPort, _ := strconv.Atoi(strings.Split(appIpPortArray[1], "/")[0])
-	preUrl := strings.Join(strings.Split(appIpPortArray[1], "/")[1:], "/")
-
+	preUrl := "/" + strings.Join(strings.Split(appIpPortArray[1], "/")[1:], "/") + "/"
+	if preUrl == "//" {
+		preUrl = "/"
+	}
 	isSsl, _ := strconv.ParseBool(environment.GetInstance().GetConfigEnvVars()[constants.HTTPS_ENABLE])
 	hostName, err := os.Hostname()
 	if err != nil {
@@ -49,9 +51,9 @@ func (e *Eureka) RegisterApp(appIpPort string) {
 
 	instanceInfo.Metadata.Map["management.port"] = strconv.Itoa(appPort)
 	instanceInfo.InstanceID = hostName + ":" + constants.NAME + ":" + strconv.Itoa(appPort)
-	instanceInfo.HomePageUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/" + preUrl
-	instanceInfo.HealthCheckUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/" + preUrl + "/ping"
-	instanceInfo.StatusPageUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + "/" + preUrl + "/ping"
+	instanceInfo.HomePageUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + preUrl
+	instanceInfo.HealthCheckUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + preUrl + "ping"
+	instanceInfo.StatusPageUrl = protocol + "://" + appIp + ":" + strconv.Itoa(appPort) + preUrl + "ping"
 
 	err = e.client.RegisterInstance(constants.NAME, instanceInfo)
 	if err != nil {
