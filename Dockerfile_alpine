@@ -1,5 +1,8 @@
 FROM golang:1.15-alpine3.12
 
+#!!! issues for command in background. Previous background commands seems to be killed
+#!!! only on alpine. OK on win and ubuntu
+
 ################################
 ## only for testing purposes ###
 ################################
