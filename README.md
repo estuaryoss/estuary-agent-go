@@ -1,16 +1,11 @@
 # Estuary Agent
 
-The agent is written in Go, and it executes low-level commands.
+The agent is written in Go, and it executes low-level commands. Part of the Estuary stack.
 
-## Rest API tests
+## Rest API tests & documentation
 
-https://github.com/estuaryoss/estuary-agent/tree/estuary-agent-go (branch estuary-agent-go)    
-Folders: **tests/rest_win** & **tests/rest**
+https://github.com/estuaryoss/estuary-agent (original impl)
 
-## Known issues
-
-Previous background commands seems to be killed.  
-Only on alpine. OK on win and ubuntu
 
 References
 
