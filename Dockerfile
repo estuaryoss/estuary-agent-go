@@ -9,7 +9,7 @@ RUN mkdir $APP_DIR
 WORKDIR $APP_DIR
 
 COPY estuary-agent-go $APP_DIR
-ADD https://estuary-agent-go.s3.eu-central-1.amazonaws.com/4.1.0/runcmd-linux $APP_DIR/runcmd
+ADD https://github.com/estuaryoss/runcmd/releases/download/1.0.0/runcmd-linux $APP_DIR/runcmd
 ADD https $APP_DIR/https
 
 RUN chmod +x estuary-agent-go

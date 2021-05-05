@@ -168,11 +168,14 @@ var CommandDetachedGet = func(w http.ResponseWriter, r *http.Request) {
 	cd := models.NewCommandDescription()
 
 	if !u.DoesFileExists(jsonFileName) {
-		u.ApiResponseError(w, u.ApiMessage(uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE),
-			u.GetMessage()[uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE)],
-			fmt.Sprintf("File %s does not exists", jsonFileName),
-			r.URL.Path))
-		return
+		err := u.WriteFileJson(jsonFileName, &models.CommandDescription{})
+		if err != nil {
+			u.ApiResponseError(w, u.ApiMessage(uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE),
+				u.GetMessage()[uint32(constants.GET_COMMAND_DETACHED_INFO_FAILURE)],
+				fmt.Sprintf("File %s does not exists", jsonFileName),
+				r.URL.Path))
+			return
+		}
 	}
 
 	err := json.Unmarshal(u.ReadFile(jsonFileName), cd)

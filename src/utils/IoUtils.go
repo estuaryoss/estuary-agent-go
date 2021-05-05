@@ -52,16 +52,15 @@ func WriteFile(fileName string, content []byte) {
 	}
 }
 
-func WriteFileJson(fileName string, content interface{}) {
+func WriteFileJson(fileName string, content interface{}) error {
 	CreateFileIfNotExist(fileName)
 	jsonContent, err := json.Marshal(content)
 	if err != nil {
 		log.Printf(fmt.Sprintf("Failed writing JSON content to file: %s", fileName))
 	}
 	err = ioutil.WriteFile(fileName, jsonContent, 0644)
-	if err != nil {
-		log.Printf(fmt.Sprintf("Failed writing content to file: %s", fileName))
-	}
+
+	return err
 }
 
 func CreateFileIfNotExist(fileName string) {
