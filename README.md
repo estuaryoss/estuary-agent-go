@@ -32,6 +32,9 @@ This code acts both as a microservice as well as a library.
 
 - HTTP_AUTH_TOKEN -> This env var sets the auth token for the service. Will be matched with the header 'Token'  
 
+[!!!]() Use this env variable, otherwise you will open a major security hole. The attacker will have access to your system. [!!!]()
+
+
 ## Eureka registration
 
 To have all your Agent instances in a central location, Netflix Eureka is used. This means your client will discover all services used for your test and then spread the tests across all.
