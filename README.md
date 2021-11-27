@@ -1,5 +1,7 @@
 # Estuary Agent
 
+# Won't be maintained. It is replaced by [java](https://github.com/estuaryoss/estuary-agent-java) version.
+
 The agent is written in Go, and it executes low-level commands. Part of the Estuary stack.
 
 It enables any use case which implies system commands:
